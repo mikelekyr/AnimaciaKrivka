@@ -136,12 +136,12 @@ namespace AnimationCurves
             radioButtonEdit.UseVisualStyleBackColor = true;
             radioButtonEdit.CheckedChanged += RadioButtonEdit_CheckedChanged;
             // 
-            // doubleBufferPanel2
+            // doubleBufferPanel
             // 
             doubleBufferPanel.BackColor = Color.White;
             doubleBufferPanel.Dock = DockStyle.Fill;
             doubleBufferPanel.Location = new Point(190, 0);
-            doubleBufferPanel.Name = "doubleBufferPanel2";
+            doubleBufferPanel.Name = "doubleBufferPanel";
             doubleBufferPanel.Size = new Size(1168, 728);
             doubleBufferPanel.TabIndex = 1;
             doubleBufferPanel.Paint += DoubleBufferPanel_Paint;

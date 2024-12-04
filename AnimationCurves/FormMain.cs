@@ -40,9 +40,9 @@ namespace AnimationCurves
             }
             else if (curveType == EnumCurveType.BezierCubicSpline)
             {
-                bezierCubicSpline = new(); 
+                bezierCubicSpline = new();
             }
-  
+
             doubleBufferPanel.Invalidate();
         }
 
@@ -61,49 +61,67 @@ namespace AnimationCurves
 
         private void DoubleBufferPanel_MouseDown(object sender, MouseEventArgs e)
         {
-            if (bezierCurve == null)
-                return;
+            #region Bezier curve
 
-            if (state == EnumEditorState.Edit)
+            if (curveType == EnumCurveType.BezierCurve)
             {
-                lastLocation = e.Location;
+                if (bezierCurve == null)
+                    return;
 
-                int vertexID = bezierCurve.GetVertexIDByUV(e.Location);
+                if (state == EnumEditorState.Edit)
+                {
+                    lastLocation = e.Location;
 
-                if (vertexID == CurveBase.ID_INVALID)
-                {
-                    bezierCurve.UnselectAllVertices();
-                }
-                else
-                {
-                    if (key != Keys.ControlKey)
+                    int vertexID = bezierCurve.GetVertexIDByUV(e.Location);
+
+                    if (vertexID == CurveBase.ID_INVALID)
+                    {
                         bezierCurve.UnselectAllVertices();
+                    }
+                    else
+                    {
+                        if (key != Keys.ControlKey)
+                            bezierCurve.UnselectAllVertices();
 
-                    bezierCurve.SelectVertexByID(vertexID);
+                        bezierCurve.SelectVertexByID(vertexID);
+                    }
+
+
+                    //if (!network.SelectNode(e.Location, ctrlPressed))
+                    //{
+                    //    network.SelectNode(new Rectangle(), ctrlPressed);
+                    //    state = EnumEditorState.SelectBegin;
+
+                    //    if (framedSelectionBox)
+                    //        SelectionBoxFramed.InitSelectionBox(e.Location);
+                    //    else
+                    //        SelectionBox.InitSelectionBox(e.Location);
+                    //}
                 }
+                else if (state == EnumEditorState.InsertNode)
+                {
+                    MatrixF controlPoint = CoordTrans.FromUVtoXY(e.Location);
 
-
-                //if (!network.SelectNode(e.Location, ctrlPressed))
-                //{
-                //    network.SelectNode(new Rectangle(), ctrlPressed);
-                //    state = EnumEditorState.SelectBegin;
-
-                //    if (framedSelectionBox)
-                //        SelectionBoxFramed.InitSelectionBox(e.Location);
-                //    else
-                //        SelectionBox.InitSelectionBox(e.Location);
-                //}
+                    bezierCurve.AddControlPoint(new ControlPoint(controlPoint));
+                }
+                else if (state == EnumEditorState.DeleteNode)
+                {
+                    bezierCurve.Remove(bezierCurve.GetVertexIDByUV(e.Location));
+                }
             }
-            else if (state == EnumEditorState.InsertNode)
+            #endregion
+
+            #region Bezier cubic spline
+
+            if (curveType == EnumCurveType.BezierCubicSpline)
             {
-                MatrixF controlPoint = CoordTrans.FromUVtoXY(e.Location);
+                if (bezierCubicSpline == null)
+                    return;
 
-                bezierCurve.AddControlPoint(new ControlPoint(controlPoint));
+                bezierCubicSpline.ControlPoints.Add(new ControlPoint(CoordTrans.FromUVtoXY(e.Location)));
             }
-            else if (state == EnumEditorState.DeleteNode)
-            {
-                bezierCurve.Remove(bezierCurve.GetVertexIDByUV(e.Location));
-            }
+
+            #endregion
 
             doubleBufferPanel.Invalidate();
         }
@@ -163,14 +181,20 @@ namespace AnimationCurves
 
         private void RadioButtonBezierCurve_CheckedChanged(object sender, EventArgs e)
         {
-            curveType = EnumCurveType.BezierCurve;
-            ResetInitialObject();
+            if (curveType == EnumCurveType.BezierCubicSpline)
+            {
+                curveType = EnumCurveType.BezierCurve;
+                ResetInitialObject();
+            }
         }
 
         private void RadioButtonBezierSpline_CheckedChanged(object sender, EventArgs e)
         {
-            curveType = EnumCurveType.BezierCubicSpline;
-            ResetInitialObject();
+            if (curveType == EnumCurveType.BezierCurve)
+            {
+                curveType = EnumCurveType.BezierCubicSpline;
+                ResetInitialObject();
+            }
         }
     }
 }

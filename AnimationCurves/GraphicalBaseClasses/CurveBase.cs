@@ -155,17 +155,7 @@ namespace AnimationCurves.GraphicalBaseClasses
 
         #endregion
 
-        /// <summary>
-        /// Is point hit by U, V coordinates
-        /// </summary>
-        private bool IsHitByUV(ControlPoint controlPoint, Point p)
-        {
-            MatrixF xyMatrix = CoordTrans.FromUVtoXY(p);
-            PointF xyPoint = new((float)xyMatrix[0, 0] - 4, (float)xyMatrix[1, 0] - 4);
-            RectangleF r = new(xyPoint, new Size(8, 8));
-            PointF point = new((float)controlPoint.Position[0, 0], (float)controlPoint.Position[1, 0]);
-            return r.Contains(point);
-        }
+
         /// <summary>
         /// Prepocitanie krivky podla potreby
         /// </summary>
@@ -220,7 +210,7 @@ namespace AnimationCurves.GraphicalBaseClasses
         {
             for (int i = controlPoints.Count - 1; i >= 0; i--)
             {
-                if (IsHitByUV(controlPoints[i], p))
+                if (ControlPoint.IsHitByUV(controlPoints[i], p))
                     return i;
             }
             return ID_INVALID;
