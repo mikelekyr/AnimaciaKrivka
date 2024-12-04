@@ -176,9 +176,9 @@ namespace AnimationCurves.GraphicalBaseClasses
         private bool IsHitByUV(ControlPoint controlPoint, Point p)
         {
             MatrixF xyMatrix = CoordTrans.FromUVtoXY(p);
-            PointF xyPoint = new PointF((float)xyMatrix[0, 0] - 4, (float)xyMatrix[1, 0] - 4);
-            RectangleF r = new RectangleF(xyPoint, new Size(8, 8));
-            PointF point = new PointF((float)controlPoint.Position[0, 0], (float)controlPoint.Position[1, 0]);
+            PointF xyPoint = new((float)xyMatrix[0, 0] - 4, (float)xyMatrix[1, 0] - 4);
+            RectangleF r = new(xyPoint, new Size(8, 8));
+            PointF point = new((float)controlPoint.Position[0, 0], (float)controlPoint.Position[1, 0]);
             return r.Contains(point);
         }
         /// <summary>

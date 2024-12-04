@@ -132,7 +132,6 @@ namespace AnimationCurves
         #endregion
 
         private Panel panel1;
-        private DoubleBufferPanel doubleBufferPanel1;
         private GroupBox groupBoxState;
         private RadioButton radioButtonDeleteNode;
         private RadioButton radioButtonInsertNode;

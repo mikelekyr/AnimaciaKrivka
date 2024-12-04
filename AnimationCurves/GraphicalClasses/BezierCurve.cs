@@ -1,7 +1,6 @@
 ﻿using AnimationCurves.GraphicalBaseClasses;
 using AnimationCurves.Interfaces;
 using AnimationCurves.Tools;
-using System.Windows.Forms;
 
 namespace AnimationCurves.GraphicalClasses
 {
