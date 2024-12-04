@@ -118,7 +118,7 @@ namespace AnimationCurves
                 if (bezierCubicSpline == null)
                     return;
 
-                bezierCubicSpline.ControlPoints.Add(new ControlPoint(CoordTrans.FromUVtoXY(e.Location)));
+                bezierCubicSpline.AddControlPoint(new ControlPoint(CoordTrans.FromUVtoXY(e.Location)));
             }
 
             #endregion
@@ -130,6 +130,9 @@ namespace AnimationCurves
         {
             if (state == EnumEditorState.Edit)
             {
+                if (bezierCurve == null)
+                    return;
+
                 if (lastLocation == null) return;
 
                 var diffX = e.Location.X - lastLocation.Value.X;
