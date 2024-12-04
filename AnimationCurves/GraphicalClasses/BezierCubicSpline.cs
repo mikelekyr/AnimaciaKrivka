@@ -30,18 +30,61 @@ namespace AnimationCurves.GraphicalClasses
             if (controlPoints.Count < 3)
                 return;
 
-            for (int i = 1; i < controlPoints.Count - 1; i++)
+            foreach (var (cp, index) in controlPoints.Select((value, i) => (value, i)))
             {
-                var ptPrev = controlPoints[i - 1];
-                var ptCurr = controlPoints[i];
-                var ptNext = controlPoints[i + 1];
-
                 BezierCurve bezierCurve = new();
 
-                bezierCurve.AddControlPoint(ptPrev);
-                bezierCurve.AddControlPoint(ControlPoint.PointDifference(ptPrev,ptCurr));
-                bezierCurve.AddControlPoint(ControlPoint.PointDifference(ptNext, ptCurr));
-                bezierCurve.AddControlPoint(ptCurr);
+                bool isFirst = index == 0;
+                bool isLast = index == controlPoints.Count - 1;
+
+                if (isFirst)
+                {
+                    bezierCurve.AddControlPoint(controlPoints[index]);
+
+                    float startX = controlPoints[index].Position[0, 0];
+                    float startY = controlPoints[index].Position[1, 0];
+
+                    float endX = controlPoints[index + 2].Position[0, 0];
+                    float endY = controlPoints[index + 2].Position[1, 0];
+
+                    float refX = controlPoints[index + 1].Position[0, 0];
+                    float refY = controlPoints[index + 1].Position[1, 0];
+
+                    float diffX = (endX - startX) / 2.0f;
+                    float diffY = (endY - startY) / 2.0f;
+
+                    refX -= diffX;
+                    refY -= diffY;
+
+                    bezierCurve.AddControlPoint(new ControlPoint(MatrixF.BuildPointVector(refX, refY)));
+                    bezierCurve.AddControlPoint(controlPoints[index + 1]);
+                }
+                else if (isLast)
+                {
+                    bezierCurve.AddControlPoint(controlPoints[index - 1]);
+
+                    float startX = controlPoints[index - 2].Position[0, 0];
+                    float startY = controlPoints[index - 2].Position[1, 0];
+
+                    float endX = controlPoints[index].Position[0, 0];
+                    float endY = controlPoints[index].Position[1, 0];
+
+                    float refX = controlPoints[index - 1].Position[0, 0];
+                    float refY = controlPoints[index - 1].Position[1, 0];
+
+                    float diffX = (endX - startX) / 2.0f;
+                    float diffY = (endY - startY) / 2.0f;
+
+                    refX += diffX;
+                    refY += diffY;
+
+                    bezierCurve.AddControlPoint(new ControlPoint(MatrixF.BuildPointVector(refX, refY)));
+                    bezierCurve.AddControlPoint(controlPoints[index]);
+                }
+                else
+                {
+
+                }
 
                 curves.Add(bezierCurve);
             }

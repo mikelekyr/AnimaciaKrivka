@@ -21,10 +21,5 @@ namespace AnimationCurves.GraphicalBaseClasses
             PointF point = new((float)controlPoint.Position[0, 0], (float)controlPoint.Position[1, 0]);
             return r.Contains(point);
         }
-
-        public static ControlPoint PointDifference(ControlPoint pointStart, ControlPoint pointEnd)
-        {
-            return new ControlPoint(pointEnd.Position - pointStart.Position);
-        }
     }
 }

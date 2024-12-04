@@ -2,14 +2,14 @@
 {
     public static class CoordTrans
     {
-        public static float xMin = -296.0f;
-        public static float xMax = 296.0f;
-        public static float yMin = -225.0f;
-        public static float yMax = 225.0f;
+        public static float xMin = 0f;
+        public static float xMax = 1168f;
+        public static float yMin = 0f;
+        public static float yMax = 728f;
 
         public static int uMin = 0;
-        public static int uMax = 606;
-        public static int vMin = 450;
+        public static int uMax = 1168;
+        public static int vMin = 728;
         public static int vMax = 0;
 
         public static float xRange { get { return Math.Abs(xMax - xMin); } }
