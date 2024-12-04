@@ -16,7 +16,7 @@ namespace AnimationCurves.GraphicalClasses
 
                 g.DrawLine(Pens.Pink, point1, point2);
 
-                Point2D pt = new Point2D(curvePoints[i])
+                Point2D pt = new(curvePoints[i])
                 {
                     Antialiased = true,
                     Color = Color.Red

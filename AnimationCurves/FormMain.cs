@@ -7,41 +7,59 @@ namespace AnimationCurves
 {
     public partial class FormMain : Form
     {
-        private BezierCurve bezierCurve;
+        private BezierCurve? bezierCurve;
+        private BezierCubicSpline? bezierCubicSpline;
         private EnumEditorState state;
+        private EnumCurveType curveType;
         private Keys? key;
         private Point? lastLocation = null;
+        private readonly Random rand = new();
 
         public FormMain()
         {
             InitializeComponent();
 
             state = EnumEditorState.Edit;
+            curveType = EnumCurveType.BezierCurve;
 
-            Random rand = new();
-
-            // bezierova krivka
-            bezierCurve = new BezierCurve();
-
-            for (int i = 0; i < 4; i++)
-                bezierCurve.AddControlPoint(
-                    new ControlPoint(MatrixF.BuildPointVector(((float)rand.NextDouble() * CoordTrans.xRange) + CoordTrans.xMin, ((float)rand.NextDouble() * CoordTrans.yRange) + CoordTrans.yMin)));
-
+            ResetInitialObject();
         }
-        private void Form1_Load(object sender, EventArgs e)
+
+        private void ResetInitialObject()
         {
+            bezierCubicSpline = null;
+            bezierCurve = null;
+
+            if (curveType == EnumCurveType.BezierCurve)
+            {
+                bezierCurve = new();
+
+                for (int i = 0; i < 4; i++)
+                    bezierCurve.AddControlPoint(
+                    new ControlPoint(MatrixF.BuildPointVector(((float)rand.NextDouble() * CoordTrans.xRange) + CoordTrans.xMin, ((float)rand.NextDouble() * CoordTrans.yRange) + CoordTrans.yMin)));
+            }
+            else if (curveType == EnumCurveType.BezierCubicSpline)
+            {
+                bezierCubicSpline = new(); 
+            }
+  
+            doubleBufferPanel.Invalidate();
         }
 
-        private void doubleBufferPanel1_Paint(object sender, PaintEventArgs e)
+        private void DoubleBufferPanel_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
 
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-            bezierCurve.Draw(g);
+            // draw curve if it exists
+            bezierCurve?.Draw(g);
+
+            // draw spline if it exists
+            bezierCubicSpline?.Draw(g);
         }
 
-        private void doubleBufferPanel2_MouseDown(object sender, MouseEventArgs e)
+        private void DoubleBufferPanel_MouseDown(object sender, MouseEventArgs e)
         {
             if (bezierCurve == null)
                 return;
@@ -87,10 +105,10 @@ namespace AnimationCurves
                 bezierCurve.Remove(bezierCurve.GetVertexIDByUV(e.Location));
             }
 
-            doubleBufferPanel2.Invalidate();
+            doubleBufferPanel.Invalidate();
         }
 
-        private void doubleBufferPanel2_MouseMove(object sender, MouseEventArgs e)
+        private void DoubleBufferPanel_MouseMove(object sender, MouseEventArgs e)
         {
             if (state == EnumEditorState.Edit)
             {
@@ -106,11 +124,11 @@ namespace AnimationCurves
                 }
 
                 lastLocation = e.Location;
-                doubleBufferPanel2.Invalidate();
+                doubleBufferPanel.Invalidate();
             }
         }
 
-        private void doubleBufferPanel2_MouseUp(object sender, MouseEventArgs e)
+        private void DoubleBufferPanel_MouseUp(object sender, MouseEventArgs e)
         {
             if (state == EnumEditorState.Edit)
             {
@@ -118,17 +136,17 @@ namespace AnimationCurves
             }
         }
 
-        private void radioButtonEdit_CheckedChanged(object sender, EventArgs e)
+        private void RadioButtonEdit_CheckedChanged(object sender, EventArgs e)
         {
             state = EnumEditorState.Edit;
         }
 
-        private void radioButtonDeleteNode_CheckedChanged(object sender, EventArgs e)
+        private void RadioButtonDeleteNode_CheckedChanged(object sender, EventArgs e)
         {
             state = EnumEditorState.DeleteNode;
         }
 
-        private void radioButtonInsertNode_CheckedChanged(object sender, EventArgs e)
+        private void RadioButtonInsertNode_CheckedChanged(object sender, EventArgs e)
         {
             state = EnumEditorState.InsertNode;
         }
@@ -141,6 +159,18 @@ namespace AnimationCurves
         private void FormMain_KeyUp(object sender, KeyEventArgs e)
         {
             key = null;
+        }
+
+        private void RadioButtonBezierCurve_CheckedChanged(object sender, EventArgs e)
+        {
+            curveType = EnumCurveType.BezierCurve;
+            ResetInitialObject();
+        }
+
+        private void RadioButtonBezierSpline_CheckedChanged(object sender, EventArgs e)
+        {
+            curveType = EnumCurveType.BezierCubicSpline;
+            ResetInitialObject();
         }
     }
 }

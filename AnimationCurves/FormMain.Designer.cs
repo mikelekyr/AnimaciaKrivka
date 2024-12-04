@@ -31,17 +31,22 @@ namespace AnimationCurves
         private void InitializeComponent()
         {
             panel1 = new Panel();
+            groupBox1 = new GroupBox();
+            radioButtonBezierCurve = new RadioButton();
+            radioButtonBezierSpline = new RadioButton();
             groupBoxState = new GroupBox();
             radioButtonDeleteNode = new RadioButton();
             radioButtonInsertNode = new RadioButton();
             radioButtonEdit = new RadioButton();
-            doubleBufferPanel2 = new DoubleBufferPanel();
+            doubleBufferPanel = new DoubleBufferPanel();
             panel1.SuspendLayout();
+            groupBox1.SuspendLayout();
             groupBoxState.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
+            panel1.Controls.Add(groupBox1);
             panel1.Controls.Add(groupBoxState);
             panel1.Dock = DockStyle.Left;
             panel1.Location = new Point(0, 0);
@@ -49,12 +54,47 @@ namespace AnimationCurves
             panel1.Size = new Size(190, 728);
             panel1.TabIndex = 0;
             // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(radioButtonBezierCurve);
+            groupBox1.Controls.Add(radioButtonBezierSpline);
+            groupBox1.Location = new Point(12, 12);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(161, 74);
+            groupBox1.TabIndex = 4;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Curve type";
+            // 
+            // radioButtonBezierCurve
+            // 
+            radioButtonBezierCurve.AutoSize = true;
+            radioButtonBezierCurve.Checked = true;
+            radioButtonBezierCurve.Location = new Point(11, 24);
+            radioButtonBezierCurve.Name = "radioButtonBezierCurve";
+            radioButtonBezierCurve.Size = new Size(88, 19);
+            radioButtonBezierCurve.TabIndex = 1;
+            radioButtonBezierCurve.TabStop = true;
+            radioButtonBezierCurve.Text = "Bezier curve";
+            radioButtonBezierCurve.UseVisualStyleBackColor = true;
+            radioButtonBezierCurve.CheckedChanged += RadioButtonBezierCurve_CheckedChanged;
+            // 
+            // radioButtonBezierSpline
+            // 
+            radioButtonBezierSpline.AutoSize = true;
+            radioButtonBezierSpline.Location = new Point(11, 49);
+            radioButtonBezierSpline.Name = "radioButtonBezierSpline";
+            radioButtonBezierSpline.Size = new Size(90, 19);
+            radioButtonBezierSpline.TabIndex = 0;
+            radioButtonBezierSpline.Text = "Bezier spline";
+            radioButtonBezierSpline.UseVisualStyleBackColor = true;
+            radioButtonBezierSpline.CheckedChanged += RadioButtonBezierSpline_CheckedChanged;
+            // 
             // groupBoxState
             // 
             groupBoxState.Controls.Add(radioButtonDeleteNode);
             groupBoxState.Controls.Add(radioButtonInsertNode);
             groupBoxState.Controls.Add(radioButtonEdit);
-            groupBoxState.Location = new Point(12, 12);
+            groupBoxState.Location = new Point(12, 92);
             groupBoxState.Name = "groupBoxState";
             groupBoxState.Size = new Size(161, 103);
             groupBoxState.TabIndex = 3;
@@ -70,7 +110,7 @@ namespace AnimationCurves
             radioButtonDeleteNode.TabIndex = 2;
             radioButtonDeleteNode.Text = "Insert delete node";
             radioButtonDeleteNode.UseVisualStyleBackColor = true;
-            radioButtonDeleteNode.CheckedChanged += radioButtonDeleteNode_CheckedChanged;
+            radioButtonDeleteNode.CheckedChanged += RadioButtonDeleteNode_CheckedChanged;
             // 
             // radioButtonInsertNode
             // 
@@ -81,7 +121,7 @@ namespace AnimationCurves
             radioButtonInsertNode.TabIndex = 1;
             radioButtonInsertNode.Text = "Insert node";
             radioButtonInsertNode.UseVisualStyleBackColor = true;
-            radioButtonInsertNode.CheckedChanged += radioButtonInsertNode_CheckedChanged;
+            radioButtonInsertNode.CheckedChanged += RadioButtonInsertNode_CheckedChanged;
             // 
             // radioButtonEdit
             // 
@@ -94,36 +134,37 @@ namespace AnimationCurves
             radioButtonEdit.TabStop = true;
             radioButtonEdit.Text = "Edit";
             radioButtonEdit.UseVisualStyleBackColor = true;
-            radioButtonEdit.CheckedChanged += radioButtonEdit_CheckedChanged;
+            radioButtonEdit.CheckedChanged += RadioButtonEdit_CheckedChanged;
             // 
             // doubleBufferPanel2
             // 
-            doubleBufferPanel2.BackColor = Color.White;
-            doubleBufferPanel2.Dock = DockStyle.Fill;
-            doubleBufferPanel2.Location = new Point(190, 0);
-            doubleBufferPanel2.Name = "doubleBufferPanel2";
-            doubleBufferPanel2.Size = new Size(1168, 728);
-            doubleBufferPanel2.TabIndex = 1;
-            doubleBufferPanel2.Paint += doubleBufferPanel1_Paint;
-            doubleBufferPanel2.MouseDown += doubleBufferPanel2_MouseDown;
-            doubleBufferPanel2.MouseMove += doubleBufferPanel2_MouseMove;
-            doubleBufferPanel2.MouseUp += doubleBufferPanel2_MouseUp;
+            doubleBufferPanel.BackColor = Color.White;
+            doubleBufferPanel.Dock = DockStyle.Fill;
+            doubleBufferPanel.Location = new Point(190, 0);
+            doubleBufferPanel.Name = "doubleBufferPanel2";
+            doubleBufferPanel.Size = new Size(1168, 728);
+            doubleBufferPanel.TabIndex = 1;
+            doubleBufferPanel.Paint += DoubleBufferPanel_Paint;
+            doubleBufferPanel.MouseDown += DoubleBufferPanel_MouseDown;
+            doubleBufferPanel.MouseMove += DoubleBufferPanel_MouseMove;
+            doubleBufferPanel.MouseUp += DoubleBufferPanel_MouseUp;
             // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1358, 728);
-            Controls.Add(doubleBufferPanel2);
+            Controls.Add(doubleBufferPanel);
             Controls.Add(panel1);
             KeyPreview = true;
             Name = "FormMain";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Animation and curves";
-            Load += Form1_Load;
             KeyDown += FormMain_KeyDown;
             KeyUp += FormMain_KeyUp;
             panel1.ResumeLayout(false);
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             groupBoxState.ResumeLayout(false);
             groupBoxState.PerformLayout();
             ResumeLayout(false);
@@ -136,6 +177,9 @@ namespace AnimationCurves
         private RadioButton radioButtonDeleteNode;
         private RadioButton radioButtonInsertNode;
         private RadioButton radioButtonEdit;
-        private DoubleBufferPanel doubleBufferPanel2;
+        private DoubleBufferPanel doubleBufferPanel;
+        private GroupBox groupBox1;
+        private RadioButton radioButtonBezierSpline;
+        private RadioButton radioButtonBezierCurve;
     }
 }

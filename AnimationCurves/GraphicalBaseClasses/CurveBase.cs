@@ -2,21 +2,6 @@
 
 namespace AnimationCurves.GraphicalBaseClasses
 {
-    public sealed class ControlPoint
-    {
-        private MatrixF position;
-        private bool selected;
-
-        public MatrixF Position { get { return position; } set { position = value; } }
-        public bool Selected { get { return selected; } set { selected = value; } }
-
-        public ControlPoint(MatrixF paPosition, bool paSelected = false)
-        {
-            position = paPosition;
-            selected = paSelected;
-        }
-    }
-
     public abstract class CurveBase
     {
         #region Constants
