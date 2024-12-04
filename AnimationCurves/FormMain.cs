@@ -9,7 +9,8 @@ namespace AnimationCurves
     {
         private BezierCurve bezierCurve;
         private EnumEditorState state;
-        private Keys key;
+        private Keys? key;
+        private Point? lastLocation = null;
 
         public FormMain()
         {
@@ -47,9 +48,11 @@ namespace AnimationCurves
 
             if (state == EnumEditorState.Edit)
             {
-                int? vertexID = bezierCurve.GetVertexIDByUV(e.Location);
+                lastLocation = e.Location;
 
-                if (vertexID == null)
+                int vertexID = bezierCurve.GetVertexIDByUV(e.Location);
+
+                if (vertexID == CurveBase.ID_INVALID)
                 {
                     bezierCurve.UnselectAllVertices();
                 }
@@ -87,13 +90,32 @@ namespace AnimationCurves
             doubleBufferPanel2.Invalidate();
         }
 
-
         private void doubleBufferPanel2_MouseMove(object sender, MouseEventArgs e)
         {
+            if (state == EnumEditorState.Edit)
+            {
+                if (lastLocation == null) return;
+
+                var diffX = e.Location.X - lastLocation.Value.X;
+                var diffY = e.Location.Y - lastLocation.Value.Y;
+
+                foreach (var index in bezierCurve.SelectedControlPointIndices ?? [])
+                {
+                    var position = bezierCurve[index];
+                    bezierCurve.Move(MatrixF.BuildPointVector(position[0, 0] + diffX, position[1, 0] - diffY), index);
+                }
+
+                lastLocation = e.Location;
+                doubleBufferPanel2.Invalidate();
+            }
         }
 
         private void doubleBufferPanel2_MouseUp(object sender, MouseEventArgs e)
         {
+            if (state == EnumEditorState.Edit)
+            {
+                lastLocation = null;
+            }
         }
 
         private void radioButtonEdit_CheckedChanged(object sender, EventArgs e)
@@ -114,6 +136,11 @@ namespace AnimationCurves
         private void FormMain_KeyDown(object sender, KeyEventArgs e)
         {
             key = e.KeyCode;
+        }
+
+        private void FormMain_KeyUp(object sender, KeyEventArgs e)
+        {
+            key = null;
         }
     }
 }

@@ -121,6 +121,7 @@ namespace AnimationCurves
             Text = "Animation and curves";
             Load += Form1_Load;
             KeyDown += FormMain_KeyDown;
+            KeyUp += FormMain_KeyUp;
             panel1.ResumeLayout(false);
             groupBoxState.ResumeLayout(false);
             groupBoxState.PerformLayout();
