@@ -46,7 +46,7 @@ namespace AnimationCurves
             panel1.Dock = DockStyle.Left;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(190, 450);
+            panel1.Size = new Size(190, 728);
             panel1.TabIndex = 0;
             // 
             // groupBoxState
@@ -102,7 +102,7 @@ namespace AnimationCurves
             doubleBufferPanel2.Dock = DockStyle.Fill;
             doubleBufferPanel2.Location = new Point(190, 0);
             doubleBufferPanel2.Name = "doubleBufferPanel2";
-            doubleBufferPanel2.Size = new Size(610, 450);
+            doubleBufferPanel2.Size = new Size(1168, 728);
             doubleBufferPanel2.TabIndex = 1;
             doubleBufferPanel2.Paint += doubleBufferPanel1_Paint;
             doubleBufferPanel2.MouseDown += doubleBufferPanel2_MouseDown;
@@ -113,11 +113,12 @@ namespace AnimationCurves
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1358, 728);
             Controls.Add(doubleBufferPanel2);
             Controls.Add(panel1);
             KeyPreview = true;
             Name = "FormMain";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Animation and curves";
             Load += Form1_Load;
             KeyDown += FormMain_KeyDown;
