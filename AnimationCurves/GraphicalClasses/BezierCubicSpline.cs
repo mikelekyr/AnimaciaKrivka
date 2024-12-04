@@ -1,7 +1,6 @@
 ﻿using AnimationCurves.GraphicalBaseClasses;
 using AnimationCurves.Interfaces;
 using AnimationCurves.Tools;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 
 namespace AnimationCurves.GraphicalClasses
 {
