@@ -19,6 +19,10 @@ namespace AnimationCurves.GraphicalBaseClasses
 
     public abstract class CurveBase
     {
+        #region Constants
+        public const int ID_INVALID = -1;
+        #endregion
+
         #region Properties
 
         protected readonly List<ControlPoint> controlPoints;
@@ -225,16 +229,16 @@ namespace AnimationCurves.GraphicalBaseClasses
         }
 
         /// <summary>
-        /// Get vertex ID by U, V coordinates
+        /// Get vertex ID by U, V coordinates or ID_INVALID if not hit
         /// </summary>
-        public int? GetVertexIDByUV(Point p)
+        public int GetVertexIDByUV(Point p)
         {
             for (int i = controlPoints.Count - 1; i >= 0; i--)
             {
                 if (IsHitByUV(controlPoints[i], p))
                     return i;
             }
-            return null;
+            return ID_INVALID;
         }
 
         /// <summary>
@@ -254,20 +258,19 @@ namespace AnimationCurves.GraphicalBaseClasses
         /// <summary>
         /// Select vertex by ID
         /// </summary>
-        public void SelectVertexByID(int? vID)
+        public void SelectVertexByID(int vID)
         {
-            if (vID == null)
-                return;
-
-            controlPoints[vID.Value].Selected = true;
+            if (controlPoints[vID].Selected == true) return;
+            controlPoints[vID].Selected = true;
+            SelectedControlPointIndices = [..SelectedControlPointIndices ?? [], vID];
         }
 
         /// Select vertex by ID
         /// </summary>
         public void UnselectAllVertices()
         {
-            foreach (var v in controlPoints)
-                v.Selected = false;
+            foreach (var v in controlPoints) v.Selected = false;
+            SelectedControlPointIndices = null;
         }
 
         #endregion
