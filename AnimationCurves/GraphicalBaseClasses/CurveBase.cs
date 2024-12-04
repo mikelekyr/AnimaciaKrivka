@@ -118,19 +118,19 @@ namespace AnimationCurves.GraphicalBaseClasses
                 if (value == null)
                     SelectedControlPointIndices = null;
                 else
-                    SelectedControlPointIndices = new int[] { value.Value };
+                    SelectedControlPointIndices = [value.Value];
             }
         }
 
         /// <summary>
         /// SelectedControlPointIndices
         /// </summary>
-        public int[] SelectedControlPointIndices { get; set; } = null;
+        public int[]? SelectedControlPointIndices { get; set; } = null;
 
         /// <summary>
         /// SelectedControlPoint
         /// </summary>
-        public ControlPoint SelectedControlPoint
+        public ControlPoint? SelectedControlPoint
         {
             get
             {
@@ -159,7 +159,9 @@ namespace AnimationCurves.GraphicalBaseClasses
         /// </summary>
         public CurveBase()
         {
-            controlPoints = new List<ControlPoint>();
+            controlPoints = [];
+            curvePoints = [];
+            segmentLengths = [];
         }
 
         #endregion
@@ -206,10 +208,16 @@ namespace AnimationCurves.GraphicalBaseClasses
         /// <summary>
         /// Remove
         /// </summary>
-        public ControlPoint Remove(int index)
+        public ControlPoint? Remove(int? index)
         {
-            ControlPoint removedPoint = controlPoints[index];
-            controlPoints.RemoveAt(index);
+            if (index == null)
+                return null;
+
+            if (controlPoints.Count <= 2)
+                return null;    
+
+            ControlPoint removedPoint = controlPoints[index.Value];
+            controlPoints.RemoveAt(index.Value);
 
             RecalculateCurve();
 

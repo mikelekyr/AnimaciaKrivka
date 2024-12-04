@@ -51,14 +51,16 @@ namespace AnimationCurves
             }
             else if (state == EnumEditorState.InsertNode)
             {
-                //for (int i = 0; i < 4; i++)
-                //    bezierCurve.AddControlPoint(
-                //    new ControlPoint(MatrixF.BuildPointVector(((float)rand.NextDouble() * CoordTrans.xRange) + CoordTrans.xMin, ((float)rand.NextDouble() * CoordTrans.yRange) + CoordTrans.yMin)));
+                MatrixF controlPoint = CoordTrans.FromUVtoXY(e.Location);
+
+                bezierCurve.AddControlPoint(new ControlPoint(controlPoint));
             }
             else if (state == EnumEditorState.DeleteNode)
             {
-
+                bezierCurve.Remove(bezierCurve.GetVertexIDByUV(e.Location));
             }
+
+            doubleBufferPanel2.Invalidate();
         }
 
 
