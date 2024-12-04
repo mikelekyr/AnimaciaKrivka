@@ -2,7 +2,6 @@ using AnimationCurves.Enums;
 using AnimationCurves.GraphicalBaseClasses;
 using AnimationCurves.GraphicalClasses;
 using AnimationCurves.Tools;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 
 namespace AnimationCurves
 {
@@ -10,6 +9,7 @@ namespace AnimationCurves
     {
         private BezierCurve bezierCurve;
         private EnumEditorState state;
+        private Keys key;
 
         public FormMain()
         {
@@ -47,7 +47,31 @@ namespace AnimationCurves
 
             if (state == EnumEditorState.Edit)
             {
+                int? vertexID = bezierCurve.GetVertexIDByUV(e.Location);
 
+                if (vertexID == null)
+                {
+                    bezierCurve.UnselectAllVertices();
+                }
+                else
+                {
+                    if (key != Keys.ControlKey)
+                        bezierCurve.UnselectAllVertices();
+
+                    bezierCurve.SelectVertexByID(vertexID);
+                }
+
+
+                //if (!network.SelectNode(e.Location, ctrlPressed))
+                //{
+                //    network.SelectNode(new Rectangle(), ctrlPressed);
+                //    state = EnumEditorState.SelectBegin;
+
+                //    if (framedSelectionBox)
+                //        SelectionBoxFramed.InitSelectionBox(e.Location);
+                //    else
+                //        SelectionBox.InitSelectionBox(e.Location);
+                //}
             }
             else if (state == EnumEditorState.InsertNode)
             {
@@ -66,12 +90,10 @@ namespace AnimationCurves
 
         private void doubleBufferPanel2_MouseMove(object sender, MouseEventArgs e)
         {
-
         }
 
         private void doubleBufferPanel2_MouseUp(object sender, MouseEventArgs e)
         {
-
         }
 
         private void radioButtonEdit_CheckedChanged(object sender, EventArgs e)
@@ -89,6 +111,9 @@ namespace AnimationCurves
             state = EnumEditorState.InsertNode;
         }
 
-
+        private void FormMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            key = e.KeyCode;
+        }
     }
 }

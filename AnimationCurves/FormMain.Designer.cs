@@ -116,9 +116,11 @@ namespace AnimationCurves
             ClientSize = new Size(800, 450);
             Controls.Add(doubleBufferPanel2);
             Controls.Add(panel1);
+            KeyPreview = true;
             Name = "FormMain";
             Text = "Animation and curves";
             Load += Form1_Load;
+            KeyDown += FormMain_KeyDown;
             panel1.ResumeLayout(false);
             groupBoxState.ResumeLayout(false);
             groupBoxState.PerformLayout();

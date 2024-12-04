@@ -1,6 +1,7 @@
 ﻿using AnimationCurves.GraphicalBaseClasses;
 using AnimationCurves.Interfaces;
 using AnimationCurves.Tools;
+using System.Windows.Forms;
 
 namespace AnimationCurves.GraphicalClasses
 {
@@ -38,16 +39,36 @@ namespace AnimationCurves.GraphicalClasses
                 g.DrawLine(pen, point1, point2);
             }
 
-            for (int i = 0; i < controlPoints.Count; i++)
-            {
-                Point controlPoint = CoordTrans.FromXYtoUV(controlPoints[i].Position);
-                Point point = new(controlPoint.X - 5, controlPoint.Y - 5);
-                Rectangle rect = new(point, new Size(10, 10));
+            using Font font = new("Arial", 10);
 
-                g.FillRectangle(Brushes.DarkOrange, rect);
+            // Draw first control point
+            Point controlPoint = CoordTrans.FromXYtoUV(controlPoints[0].Position);
+            Point point = new Point(controlPoint.X - 5, controlPoint.Y - 5);
+            Rectangle rect = new Rectangle(point, new Size(10, 10));
+            g.FillRectangle(controlPoints[0].Selected ? Brushes.LimeGreen : Brushes.OrangeRed, rect);
+            g.DrawRectangle(Pens.Black, rect);
+            g.DrawString("V start", font, Brushes.Black, new Point(rect.X + 10, rect.Y + 10));
+
+            // Draw intermediate control points
+            for (int i = 1; i < controlPoints.Count - 1; i++)
+            {
+                controlPoint = CoordTrans.FromXYtoUV(controlPoints[i].Position);
+                point = new Point(controlPoint.X - 5, controlPoint.Y - 5);
+                rect = new Rectangle(point, new Size(10, 10));
+                g.FillRectangle(controlPoints[i].Selected ? Brushes.LimeGreen : Brushes.DarkOrange, rect);
                 g.DrawRectangle(Pens.Black, rect);
+                g.DrawString("C" + i.ToString(), font, Brushes.Black, new Point(rect.X + 10, rect.Y + 10));
             }
+
+            // Draw last control point
+            controlPoint = CoordTrans.FromXYtoUV(controlPoints[controlPoints.Count - 1].Position);
+            point = new Point(controlPoint.X - 5, controlPoint.Y - 5);
+            rect = new Rectangle(point, new Size(10, 10));
+            g.FillRectangle(controlPoints[controlPoints.Count - 1].Selected ? Brushes.LimeGreen : Brushes.OrangeRed, rect);
+            g.DrawRectangle(Pens.Black, rect);
+            g.DrawString("V end", font, Brushes.Black, new Point(rect.X + 10, rect.Y + 10));
         }
+
 
         public override MatrixF GetPointAndAngleOnCurve(float time, out float angle)
         {
