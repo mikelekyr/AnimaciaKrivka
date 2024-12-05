@@ -9,6 +9,7 @@ namespace AnimationCurves
     {
         private BezierCurve? bezierCurve;
         private BezierCubicSpline? bezierCubicSpline;
+        private EnumEditorMode mode;
         private EnumEditorState state;
         private EnumCurveType curveType;
         private Keys? key;
@@ -19,7 +20,9 @@ namespace AnimationCurves
         {
             InitializeComponent();
 
-            state = EnumEditorState.Edit;
+            mode = EnumEditorMode.Edit;
+            state = EnumEditorState.None;
+
             curveType = EnumCurveType.BezierCurve;
 
             ResetInitialObject();
@@ -37,6 +40,8 @@ namespace AnimationCurves
                 for (int i = 0; i < 4; i++)
                     bezierCurve.AddControlPoint(
                     new ControlPoint(MatrixF.BuildPointVector(((float)rand.NextDouble() * CoordTrans.xRange) + CoordTrans.xMin, ((float)rand.NextDouble() * CoordTrans.yRange) + CoordTrans.yMin)));
+
+                bezierCurve.DrawAllControls = true; 
             }
             else if (curveType == EnumCurveType.BezierCubicSpline)
             {
@@ -49,7 +54,6 @@ namespace AnimationCurves
         private void DoubleBufferPanel_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
             // draw curve if it exists
@@ -57,6 +61,12 @@ namespace AnimationCurves
 
             // draw spline if it exists
             bezierCubicSpline?.Draw(g);
+
+            if (state == EnumEditorState.Selecting)
+            {
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
+                SelectionBoxFramed.Draw(g);
+            }
         }
 
         private void DoubleBufferPanel_MouseDown(object sender, MouseEventArgs e)
@@ -68,7 +78,7 @@ namespace AnimationCurves
                 if (bezierCurve == null)
                     return;
 
-                if (state == EnumEditorState.Edit)
+                if (mode == EnumEditorMode.Edit)
                 {
                     lastLocation = e.Location;
 
@@ -85,26 +95,14 @@ namespace AnimationCurves
 
                         bezierCurve.SelectVertexByID(vertexID);
                     }
-
-
-                    //if (!network.SelectNode(e.Location, ctrlPressed))
-                    //{
-                    //    network.SelectNode(new Rectangle(), ctrlPressed);
-                    //    state = EnumEditorState.SelectBegin;
-
-                    //    if (framedSelectionBox)
-                    //        SelectionBoxFramed.InitSelectionBox(e.Location);
-                    //    else
-                    //        SelectionBox.InitSelectionBox(e.Location);
-                    //}
                 }
-                else if (state == EnumEditorState.InsertNode)
+                else if (mode == EnumEditorMode.InsertNode)
                 {
                     MatrixF controlPoint = CoordTrans.FromUVtoXY(e.Location);
 
                     bezierCurve.AddControlPoint(new ControlPoint(controlPoint));
                 }
-                else if (state == EnumEditorState.DeleteNode)
+                else if (mode == EnumEditorMode.DeleteNode)
                 {
                     bezierCurve.Remove(bezierCurve.GetVertexIDByUV(e.Location));
                 }
@@ -128,7 +126,7 @@ namespace AnimationCurves
 
         private void DoubleBufferPanel_MouseMove(object sender, MouseEventArgs e)
         {
-            if (state == EnumEditorState.Edit)
+            if (mode == EnumEditorMode.Edit)
             {
                 if (bezierCurve == null)
                     return;
@@ -151,7 +149,7 @@ namespace AnimationCurves
 
         private void DoubleBufferPanel_MouseUp(object sender, MouseEventArgs e)
         {
-            if (state == EnumEditorState.Edit)
+            if (mode == EnumEditorMode.Edit)
             {
                 lastLocation = null;
             }
@@ -159,17 +157,17 @@ namespace AnimationCurves
 
         private void RadioButtonEdit_CheckedChanged(object sender, EventArgs e)
         {
-            state = EnumEditorState.Edit;
+            mode = EnumEditorMode.Edit;
         }
 
         private void RadioButtonDeleteNode_CheckedChanged(object sender, EventArgs e)
         {
-            state = EnumEditorState.DeleteNode;
+            mode = EnumEditorMode.DeleteNode;
         }
 
         private void RadioButtonInsertNode_CheckedChanged(object sender, EventArgs e)
         {
-            state = EnumEditorState.InsertNode;
+            mode = EnumEditorMode.InsertNode;
         }
 
         private void FormMain_KeyDown(object sender, KeyEventArgs e)

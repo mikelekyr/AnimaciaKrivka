@@ -29,7 +29,7 @@ namespace AnimationCurves.GraphicalClasses
             if (controlPoints.Count < 3)
                 return;
 
-            float divConst = 4.0f;
+            float divConst = 5.0f;
 
             foreach (var (cp, index) in controlPoints.Select((value, i) => (value, i)))
             {

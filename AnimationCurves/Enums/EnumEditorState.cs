@@ -2,8 +2,12 @@
 {
     public enum EnumEditorState
     {
-        Edit, 
+        None = 0,
         InsertNode,
-        DeleteNode
+        InsertEdge,
+        SelectBegin,
+        Selecting,
+        PossibleDrag,
+        NodeDragging
     }
 }

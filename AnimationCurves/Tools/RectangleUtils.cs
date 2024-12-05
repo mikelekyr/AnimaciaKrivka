@@ -1,4 +1,4 @@
-﻿namespace cv1.Tools
+﻿namespace AnimationCurves.Tools
 {
     public static class RectangleUtils
     {
