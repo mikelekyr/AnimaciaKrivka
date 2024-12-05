@@ -80,9 +80,50 @@ namespace AnimationCurves.GraphicalClasses
                     bezierCurve.AddControlPoint(new ControlPoint(MatrixF.BuildPointVector(refX, refY)));
                     bezierCurve.AddControlPoint(controlPoints[index]);
                 }
-                else
+                else if (!isLast && !isFirst && controlPoints.Count > 3)
                 {
+                    if (index == 1)
+                        continue;
 
+                    bezierCurve.AddControlPoint(controlPoints[index - 1]);
+
+                    float startX = controlPoints[index - 2].Position[0, 0];
+                    float startY = controlPoints[index - 2].Position[1, 0];
+
+                    float endX = controlPoints[index].Position[0, 0];
+                    float endY = controlPoints[index].Position[1, 0];
+
+                    float refX = controlPoints[index - 1].Position[0, 0];
+                    float refY = controlPoints[index - 1].Position[1, 0];
+
+                    float diffX = (endX - startX) / 2.0f;
+                    float diffY = (endY - startY) / 2.0f;
+
+                    refX += diffX;
+                    refY += diffY;
+
+                    bezierCurve.AddControlPoint(new ControlPoint(MatrixF.BuildPointVector(refX, refY)));
+
+                    startX = controlPoints[index - 1].Position[0, 0];
+                    startY = controlPoints[index - 1].Position[1, 0];
+
+                    endX = controlPoints[index + 1].Position[0, 0];
+                    endY = controlPoints[index + 1].Position[1, 0];
+
+                    refX = controlPoints[index].Position[0, 0];
+                    refY = controlPoints[index].Position[1, 0];
+
+                    diffX = (endX - startX) / 2.0f;
+                    diffY = (endY - startY) / 2.0f;
+
+                    refX -= diffX;
+                    refY -= diffY;
+
+                    bezierCurve.AddControlPoint(new ControlPoint(MatrixF.BuildPointVector(refX, refY)));
+
+
+
+                    bezierCurve.AddControlPoint(controlPoints[index]);
                 }
 
                 curves.Add(bezierCurve);
