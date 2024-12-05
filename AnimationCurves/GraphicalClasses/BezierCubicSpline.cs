@@ -29,6 +29,8 @@ namespace AnimationCurves.GraphicalClasses
             if (controlPoints.Count < 3)
                 return;
 
+            float divConst = 3.0f;
+
             foreach (var (cp, index) in controlPoints.Select((value, i) => (value, i)))
             {
                 BezierCurve bezierCurve = new();
@@ -49,8 +51,8 @@ namespace AnimationCurves.GraphicalClasses
                     float refX = controlPoints[index + 1].Position[0, 0];
                     float refY = controlPoints[index + 1].Position[1, 0];
 
-                    float diffX = (endX - startX) / 2.0f;
-                    float diffY = (endY - startY) / 2.0f;
+                    float diffX = (endX - startX) / divConst;
+                    float diffY = (endY - startY) / divConst;
 
                     refX -= diffX;
                     refY -= diffY;
@@ -71,8 +73,8 @@ namespace AnimationCurves.GraphicalClasses
                     float refX = controlPoints[index - 1].Position[0, 0];
                     float refY = controlPoints[index - 1].Position[1, 0];
 
-                    float diffX = (endX - startX) / 2.0f;
-                    float diffY = (endY - startY) / 2.0f;
+                    float diffX = (endX - startX) / divConst;
+                    float diffY = (endY - startY) / divConst;
 
                     refX += diffX;
                     refY += diffY;
@@ -96,8 +98,8 @@ namespace AnimationCurves.GraphicalClasses
                     float refX = controlPoints[index - 1].Position[0, 0];
                     float refY = controlPoints[index - 1].Position[1, 0];
 
-                    float diffX = (endX - startX) / 2.0f;
-                    float diffY = (endY - startY) / 2.0f;
+                    float diffX = (endX - startX) / divConst;
+                    float diffY = (endY - startY) / divConst;
 
                     refX += diffX;
                     refY += diffY;
@@ -120,18 +122,21 @@ namespace AnimationCurves.GraphicalClasses
                     refY -= diffY;
 
                     bezierCurve.AddControlPoint(new ControlPoint(MatrixF.BuildPointVector(refX, refY)));
-
-
-
                     bezierCurve.AddControlPoint(controlPoints[index]);
                 }
 
-                curves.Add(bezierCurve);
+                if (bezierCurve.ControlPoints.Count >= 3)
+                    curves.Add(bezierCurve);
             }
         }
 
         public void Draw(Graphics g)
         {
+            foreach (var curve in curves)
+            {
+                curve.Draw(g);
+            }
+
             using Font font = new("Arial", 8);
 
             foreach (var (cp, index) in controlPoints.Select((value, i) => (value, i)))
@@ -160,11 +165,6 @@ namespace AnimationCurves.GraphicalClasses
                 g.FillRectangle(isFirst || isLast ? Brushes.BlueViolet : Brushes.DarkOrange, rect);
                 g.DrawRectangle(Pens.Black, rect);
                 g.DrawString(name, font, Brushes.Black, new Point(rect.X + 6, rect.Y + 6));
-            }
-
-            foreach (var curve in curves)
-            {
-                curve.Draw(g);
             }
         }
     }

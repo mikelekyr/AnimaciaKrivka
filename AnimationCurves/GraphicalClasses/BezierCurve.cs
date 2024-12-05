@@ -6,6 +6,20 @@ namespace AnimationCurves.GraphicalClasses
 {
     public sealed class BezierCurve : CurveBase, IDrawable2DObject
     {
+        private bool drawAllControls = false;
+
+        public bool DrawAllControls
+        {
+            get
+            {
+                return drawAllControls;
+            }
+            set
+            {
+                drawAllControls = value;
+            }
+        }
+
         public void Draw(Graphics g)
         {
             // draw bezier curve points
@@ -30,21 +44,41 @@ namespace AnimationCurves.GraphicalClasses
 
             using Pen pen = new(Color.DarkGray);
 
-            for (int i = 0; i < controlPoints.Count - 1; i++)
+            if (drawAllControls)
             {
-                PointF point1 = CoordTrans.FromXYtoUV(controlPoints[i].Position);
-                PointF point2 = CoordTrans.FromXYtoUV(controlPoints[i + 1].Position);
+                for (int i = 0; i < controlPoints.Count - 1; i++)
+                {
+                    PointF point1 = CoordTrans.FromXYtoUV(controlPoints[i].Position);
+                    PointF point2 = CoordTrans.FromXYtoUV(controlPoints[i + 1].Position);
+
+                    pen.DashPattern = dashValues;
+                    g.DrawLine(pen, point1, point2);
+                }
+            }
+            else
+            {
+                PointF point1 = CoordTrans.FromXYtoUV(controlPoints[0].Position);
+                PointF point2 = CoordTrans.FromXYtoUV(controlPoints[1].Position);
+
+                pen.DashPattern = dashValues;
+                g.DrawLine(pen, point1, point2);
+
+                point1 = CoordTrans.FromXYtoUV(controlPoints[^1].Position);
+                point2 = CoordTrans.FromXYtoUV(controlPoints[^2].Position);
 
                 pen.DashPattern = dashValues;
                 g.DrawLine(pen, point1, point2);
             }
 
-            using Font font = new("Arial", 10);
+            using Font font = new("Arial", 8);
 
             foreach (var (cp, index) in controlPoints.Select((value, i) => (value, i)))
             {
                 bool isFirst = index == 0;
                 bool isLast = index == controlPoints.Count - 1;
+
+                if (!drawAllControls && (isFirst || isLast))
+                    continue;
 
                 string name = "C" + index.ToString();
 
