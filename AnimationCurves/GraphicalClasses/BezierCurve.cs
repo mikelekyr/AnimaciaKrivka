@@ -98,9 +98,11 @@ namespace AnimationCurves.GraphicalClasses
                     g.DrawRectangle(Pens.LightGray, rect);
                 }
 
-                g.FillRectangle(isFirst || isLast ? Brushes.BlueViolet : Brushes.DarkOrange, rect);
+                g.FillRectangle(isFirst || isLast ? Brushes.BlueViolet : Brushes.LightSlateGray, rect);
                 g.DrawRectangle(Pens.Black, rect);
-                g.DrawString(name, font, Brushes.Black, new Point(rect.X + 6, rect.Y + 6));
+
+                if (drawAllControls)
+                    g.DrawString(name, font, Brushes.Black, new Point(rect.X + 6, rect.Y + 6));
             }
         }
 

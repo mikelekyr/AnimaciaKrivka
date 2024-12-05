@@ -29,7 +29,7 @@ namespace AnimationCurves.GraphicalClasses
             if (controlPoints.Count < 3)
                 return;
 
-            float divConst = 3.0f;
+            float divConst = 4.0f;
 
             foreach (var (cp, index) in controlPoints.Select((value, i) => (value, i)))
             {
@@ -115,8 +115,8 @@ namespace AnimationCurves.GraphicalClasses
                     refX = controlPoints[index].Position[0, 0];
                     refY = controlPoints[index].Position[1, 0];
 
-                    diffX = (endX - startX) / 2.0f;
-                    diffY = (endY - startY) / 2.0f;
+                    diffX = (endX - startX) / divConst;
+                    diffY = (endY - startY) / divConst;
 
                     refX -= diffX;
                     refY -= diffY;
