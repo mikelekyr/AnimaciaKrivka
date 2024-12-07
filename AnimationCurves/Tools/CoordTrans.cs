@@ -90,12 +90,38 @@
         /// Transformation from float window coord (U,V) to world coord (X,Y)
         /// </summary>
         /// <param name="p"></param>
-        /// <returns></returns>
+        /// <returns>Transformed MatrixF vector</returns>
         public static MatrixF FromUVtoXY(PointF p)
         {
             return new MatrixF(new float[,] {
                 { ((float)p.X - uMin) / (uMax - uMin) * (xMax - xMin) + xMin },
                 { ((float)p.Y - vMin) / (vMax - vMin) * (yMax - yMin) + yMin },
+                { 1 }});
+        }
+
+        /// <summary>
+        /// Convert Point to MatrixF vector
+        /// </summary>
+        /// <param name="p">Point</param>
+        /// <returns>MatrixF vector</returns>
+        public static MatrixF PointToMatrixF(Point p)
+        {
+            return new MatrixF(new float[,] {
+                { p.X },
+                { p.Y },
+                { 1 }});
+        }
+
+        /// <summary>
+        /// MatrixFWithPointOffset
+        /// </summary>
+        /// <param name="p">Point</param>
+        /// <returns>MatrixF vector</returns>
+        public static MatrixF MatrixFWithPointOffset(MatrixF point, Point offset)
+        {
+            return new MatrixF(new float[,] {
+                { point[0,0] + offset.X},
+                { point[1,0] + offset.Y},
                 { 1 }});
         }
     }

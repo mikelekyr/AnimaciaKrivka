@@ -1,4 +1,5 @@
 ﻿using AnimationCurves.Tools;
+using System.Xml.Linq;
 
 namespace AnimationCurves.GraphicalBaseClasses
 {
@@ -15,6 +16,8 @@ namespace AnimationCurves.GraphicalBaseClasses
         protected List<float> segmentLengths;
         protected int curvePrecision = 70;
         protected float length = 0;
+
+        public Point ControlPointOffset { get; set; }
 
         /// <summary>
         /// Curve length
@@ -240,12 +243,69 @@ namespace AnimationCurves.GraphicalBaseClasses
             SelectedControlPointIndices = [..SelectedControlPointIndices ?? [], vID];
         }
 
-        /// Select vertex by ID
+        /// <summary>
+        /// UnselectAllVertices
         /// </summary>
         public void UnselectAllVertices()
         {
             foreach (var v in controlPoints) v.Selected = false;
             SelectedControlPointIndices = null;
+        }
+
+        /// <summary>
+        /// SelectNode
+        /// </summary>
+        public bool SelectNode(Point mousePosition, bool addSelect = false)
+        {
+            if (!addSelect)
+                controlPoints.ForEach(x => x.Selected = false);
+
+            foreach (var node in controlPoints)
+            {
+                if (ControlPoint.IsHitByUV(node, mousePosition))
+                {
+                    node.Selected = true;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// SelectNode
+        /// </summary>
+        public bool SelectNode(Rectangle selectRectangle, bool addSelect = false)
+        {
+            if (!addSelect)
+                controlPoints.ForEach(x => x.Selected = false);
+
+            if (selectRectangle.IsEmpty)
+                return false;
+
+            foreach (var node in controlPoints)
+            {
+                Point p = new((int)node.Position[0, 0], (int)node.Position[1, 0]);
+
+                if (selectRectangle.Contains(p))
+                {
+                    node.Selected = true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// UpdateControlPointsPositionAfterDrag
+        /// </summary>
+        public void UpdateControlPointsPositionAfterDrag()
+        {
+            foreach (var node in controlPoints)
+            {
+                if (node.Selected)
+                    node.Position = CoordTrans.PointToMatrixF(ControlPointOffset);
+            }
         }
 
         #endregion

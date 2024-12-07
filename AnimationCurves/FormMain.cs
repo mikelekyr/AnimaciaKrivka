@@ -2,6 +2,8 @@ using AnimationCurves.Enums;
 using AnimationCurves.GraphicalBaseClasses;
 using AnimationCurves.GraphicalClasses;
 using AnimationCurves.Tools;
+using Microsoft.VisualBasic.Devices;
+using System.Net;
 
 namespace AnimationCurves
 {
@@ -15,6 +17,9 @@ namespace AnimationCurves
         private Keys? key;
         private Point? lastLocation = null;
         private readonly Random rand = new();
+        private Point startMousePos;
+        private Point currentMousePos;
+
 
         public FormMain()
         {
@@ -78,22 +83,21 @@ namespace AnimationCurves
                 if (bezierCurve == null)
                     return;
 
+                if (state == EnumEditorState.PossibleDrag)
+                {
+                    state = EnumEditorState.NodeDragging;
+                    startMousePos = e.Location;
+                }
                 if (mode == EnumEditorMode.Edit)
                 {
-                    lastLocation = e.Location;
+                    bool ctrlPressed = key == Keys.ControlKey;
 
-                    int vertexID = bezierCurve.GetVertexIDByUV(e.Location);
-
-                    if (vertexID == CurveBase.ID_INVALID)
+                    if (!bezierCurve.SelectNode(e.Location, ctrlPressed))
                     {
-                        bezierCurve.UnselectAllVertices();
-                    }
-                    else
-                    {
-                        if (key != Keys.ControlKey)
-                            bezierCurve.UnselectAllVertices();
+                        bezierCurve.SelectNode(new Rectangle(), ctrlPressed);
 
-                        bezierCurve.SelectVertexByID(vertexID);
+                        state = EnumEditorState.SelectBegin;
+                        SelectionBoxFramed.InitSelectionBox(e.Location);
                     }
                 }
                 else if (mode == EnumEditorMode.InsertNode)
@@ -128,22 +132,28 @@ namespace AnimationCurves
         {
             if (mode == EnumEditorMode.Edit)
             {
-                if (bezierCurve == null)
-                    return;
-
-                if (lastLocation == null) return;
-
-                var diffX = e.Location.X - lastLocation.Value.X;
-                var diffY = e.Location.Y - lastLocation.Value.Y;
-
-                foreach (var index in bezierCurve.SelectedControlPointIndices ?? [])
+                if (curveType == EnumCurveType.BezierCurve)
                 {
-                    var position = bezierCurve[index];
-                    bezierCurve.Move(MatrixF.BuildPointVector(position[0, 0] + diffX, position[1, 0] - diffY), index);
-                }
+                    if (bezierCurve == null)
+                        return;
 
-                lastLocation = e.Location;
-                doubleBufferPanel.Invalidate();
+                    if (state == EnumEditorState.NodeDragging)
+                    {
+                        bezierCurve.ControlPointOffset = new(e.Location.X - startMousePos.X, e.Location.Y - startMousePos.Y);
+                    }
+                    else if (state == EnumEditorState.Selecting || state == EnumEditorState.SelectBegin)
+                    {
+                        state = EnumEditorState.Selecting;
+
+                        using Region r = SelectionBoxFramed.Track(e.Location);
+                        doubleBufferPanel.Invalidate(r);
+
+                        return;
+                    }
+
+                    lastLocation = e.Location;
+                    doubleBufferPanel.Invalidate();
+                }
             }
         }
 
@@ -151,8 +161,32 @@ namespace AnimationCurves
         {
             if (mode == EnumEditorMode.Edit)
             {
-                lastLocation = null;
+                if (curveType == EnumCurveType.BezierCurve)
+                {
+                    if (bezierCurve == null)
+                        return;
+
+                    if (state == EnumEditorState.NodeDragging)
+                    {
+                        bezierCurve.UpdateControlPointsPositionAfterDrag();
+                    }
+                    else if (state == EnumEditorState.Selecting)
+                    {
+                        bool ctrlPressed = key == Keys.ControlKey;
+
+                        bezierCurve.SelectNode(SelectionBoxFramed.TrackedRectangle, ctrlPressed);
+                    }
+
+                    bezierCurve.ControlPointOffset = new(0, 0);
+                }
             }
+
+            state = EnumEditorState.None;
+            SelectionBoxFramed.IsActive = false;
+            currentMousePos = new(0, 0);
+            startMousePos = new(0, 0);
+
+            doubleBufferPanel.Invalidate();
         }
 
         private void RadioButtonEdit_CheckedChanged(object sender, EventArgs e)

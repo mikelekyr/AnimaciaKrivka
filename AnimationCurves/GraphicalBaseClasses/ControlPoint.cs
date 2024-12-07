@@ -7,7 +7,19 @@ namespace AnimationCurves.GraphicalBaseClasses
         private MatrixF position = paPosition;
         private bool selected = paSelected;
 
-        public MatrixF Position { get { return position; } set { position = value; } }
+        public MatrixF Position 
+        { 
+            get 
+            { 
+                return CoordTrans.MatrixFWithPointOffset(position, PositionOffset); 
+            } 
+            set 
+            { 
+                position = value; 
+            }
+        }
+
+        public Point PositionOffset { get; set; }
         public bool Selected { get { return selected; } set { selected = value; } }
 
         /// <summary>
