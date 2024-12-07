@@ -285,7 +285,7 @@ namespace AnimationCurves.GraphicalBaseClasses
 
             foreach (var node in controlPoints)
             {
-                Point p = new((int)node.Position[0, 0], (int)node.Position[1, 0]);
+                Point p = CoordTrans.FromXYtoUV(node.Position);
 
                 if (selectRectangle.Contains(p))
                 {
@@ -304,8 +304,18 @@ namespace AnimationCurves.GraphicalBaseClasses
             foreach (var node in controlPoints)
             {
                 if (node.Selected)
-                    node.Position = CoordTrans.PointToMatrixF(ControlPointOffset);
+                    node.PositionOffset = ControlPointOffset;
             }
+        }
+
+        /// <summary>
+        /// HoverOverSelectedNode
+        /// </summary>
+        public bool HoverOverSelectedNode(Point parMousePosition)
+        {
+            var nodeMouseOver = GetVertexIDByUV(parMousePosition);
+
+            return (nodeMouseOver != ID_INVALID);
         }
 
         #endregion

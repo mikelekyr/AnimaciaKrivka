@@ -2,8 +2,6 @@ using AnimationCurves.Enums;
 using AnimationCurves.GraphicalBaseClasses;
 using AnimationCurves.GraphicalClasses;
 using AnimationCurves.Tools;
-using Microsoft.VisualBasic.Devices;
-using System.Net;
 
 namespace AnimationCurves
 {
@@ -15,11 +13,8 @@ namespace AnimationCurves
         private EnumEditorState state;
         private EnumCurveType curveType;
         private Keys? key;
-        private Point? lastLocation = null;
         private readonly Random rand = new();
         private Point startMousePos;
-        private Point currentMousePos;
-
 
         public FormMain()
         {
@@ -56,6 +51,11 @@ namespace AnimationCurves
             doubleBufferPanel.Invalidate();
         }
 
+        /// <summary>
+        /// Panel draw
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DoubleBufferPanel_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
@@ -74,6 +74,9 @@ namespace AnimationCurves
             }
         }
 
+        /// <summary>
+        /// Mouse down
+        /// </summary>
         private void DoubleBufferPanel_MouseDown(object sender, MouseEventArgs e)
         {
             #region Bezier curve
@@ -94,8 +97,6 @@ namespace AnimationCurves
 
                     if (!bezierCurve.SelectNode(e.Location, ctrlPressed))
                     {
-                        bezierCurve.SelectNode(new Rectangle(), ctrlPressed);
-
                         state = EnumEditorState.SelectBegin;
                         SelectionBoxFramed.InitSelectionBox(e.Location);
                     }
@@ -128,35 +129,62 @@ namespace AnimationCurves
             doubleBufferPanel.Invalidate();
         }
 
+        /// <summary>
+        /// Mouse move
+        /// </summary>
         private void DoubleBufferPanel_MouseMove(object sender, MouseEventArgs e)
         {
-            if (mode == EnumEditorMode.Edit)
+            if (e.Button == MouseButtons.Left)
+            {
+                if (mode == EnumEditorMode.Edit)
+                {
+                    if (curveType == EnumCurveType.BezierCurve)
+                    {
+                        if (bezierCurve == null)
+                            return;
+
+                        if (state == EnumEditorState.NodeDragging)
+                        {
+                            bezierCurve.ControlPointOffset = new(e.Location.X - startMousePos.X, e.Location.Y - startMousePos.Y);
+                        }
+                        else if (state == EnumEditorState.Selecting || state == EnumEditorState.SelectBegin)
+                        {
+                            state = EnumEditorState.Selecting;
+
+                            using Region r = SelectionBoxFramed.Track(e.Location);
+                            doubleBufferPanel.Invalidate(r);
+
+                            return;
+                        }
+
+                        doubleBufferPanel.Invalidate();
+                    }
+                }
+            } 
+            else if (e.Button == MouseButtons.None)
             {
                 if (curveType == EnumCurveType.BezierCurve)
                 {
                     if (bezierCurve == null)
                         return;
 
-                    if (state == EnumEditorState.NodeDragging)
+                    if (bezierCurve.HoverOverSelectedNode(e.Location))
                     {
-                        bezierCurve.ControlPointOffset = new(e.Location.X - startMousePos.X, e.Location.Y - startMousePos.Y);
+                        state = EnumEditorState.PossibleDrag;
+                        Cursor = Cursors.Hand;
                     }
-                    else if (state == EnumEditorState.Selecting || state == EnumEditorState.SelectBegin)
+                    else
                     {
-                        state = EnumEditorState.Selecting;
-
-                        using Region r = SelectionBoxFramed.Track(e.Location);
-                        doubleBufferPanel.Invalidate(r);
-
-                        return;
+                        state = EnumEditorState.None;
+                        Cursor = Cursors.Default;
                     }
-
-                    lastLocation = e.Location;
-                    doubleBufferPanel.Invalidate();
                 }
             }
         }
-
+        
+        /// <summary>
+        /// Mouse up
+        /// </summary>
         private void DoubleBufferPanel_MouseUp(object sender, MouseEventArgs e)
         {
             if (mode == EnumEditorMode.Edit)
@@ -183,7 +211,6 @@ namespace AnimationCurves
 
             state = EnumEditorState.None;
             SelectionBoxFramed.IsActive = false;
-            currentMousePos = new(0, 0);
             startMousePos = new(0, 0);
 
             doubleBufferPanel.Invalidate();
