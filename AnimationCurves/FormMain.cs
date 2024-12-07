@@ -88,6 +88,8 @@ namespace AnimationCurves
 
                 if (mode == EnumEditorMode.Edit)
                 {
+                    bool ctrlPressed = key == Keys.ControlKey;
+
                     if (state == EnumEditorState.PossibleDrag)
                     {
                         int selectedCP = bezierCurve.GetVertexIDByUV(e.Location);
@@ -96,7 +98,9 @@ namespace AnimationCurves
                         {
                             if (!bezierCurve.ControlPointIsSelected(selectedCP))
                             {
-                                bezierCurve.UnselectAllVertices();
+                                if (!ctrlPressed)
+                                    bezierCurve.UnselectAllVertices();
+
                                 bezierCurve.SelectVertexByID(selectedCP);
                             }
                         }
@@ -106,8 +110,6 @@ namespace AnimationCurves
                     }
                     else
                     {
-                        bool ctrlPressed = key == Keys.ControlKey;
-
                         if (!bezierCurve.SelectNode(e.Location, ctrlPressed))
                         {
                             state = EnumEditorState.SelectBegin;
