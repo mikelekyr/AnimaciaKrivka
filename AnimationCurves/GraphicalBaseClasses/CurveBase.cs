@@ -1,5 +1,4 @@
 ﻿using AnimationCurves.Tools;
-using System.Xml.Linq;
 
 namespace AnimationCurves.GraphicalBaseClasses
 {
@@ -17,7 +16,29 @@ namespace AnimationCurves.GraphicalBaseClasses
         protected int curvePrecision = 70;
         protected float length = 0;
 
-        public Point ControlPointOffset { get; set; }
+        public Point ControlPointOffset
+        { 
+            get
+            { 
+                return new(); 
+            }
+            set
+            {
+                bool positionUpdated = false;
+
+                foreach (var node in controlPoints)
+                {
+                    if (node.Selected)
+                    {
+                        node.PositionOffset = value;
+                        positionUpdated = true;
+                    }
+                }
+
+                if (positionUpdated)
+                    RecalculateCurve();
+            }
+        }
 
         /// <summary>
         /// Curve length
@@ -36,7 +57,7 @@ namespace AnimationCurves.GraphicalBaseClasses
             set
             {
                 if (value < 5 || value > 100)
-                    curvePrecision = 70;
+                    curvePrecision = 50;
                 else
                     curvePrecision = value;
 
@@ -79,58 +100,9 @@ namespace AnimationCurves.GraphicalBaseClasses
         /// <summary>
         /// ControlPointIsSelected
         /// </summary>
-        public bool ControlPointIsSelected(int controlPointIndex)
+        public bool ControlPointIsSelected(int index)
         {
-            if (SelectedControlPointIndices == null || SelectedControlPointIndices.Length == 0)
-                return false;
-
-            foreach (var index in SelectedControlPointIndices)
-            {
-                if (index == controlPointIndex)
-                    return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// SelectedControlPointIndex
-        /// </summary>
-        public int? SelectedControlPointIndex
-        {
-            get
-            {
-                if (SelectedControlPointIndices != null && SelectedControlPointIndices.Length > 0)
-                    return SelectedControlPointIndices[0];
-
-                return null;
-            }
-            internal set
-            {
-                if (value == null)
-                    SelectedControlPointIndices = null;
-                else
-                    SelectedControlPointIndices = [value.Value];
-            }
-        }
-
-        /// <summary>
-        /// SelectedControlPointIndices
-        /// </summary>
-        public int[]? SelectedControlPointIndices { get; set; } = null;
-
-        /// <summary>
-        /// SelectedControlPoint
-        /// </summary>
-        public ControlPoint? SelectedControlPoint
-        {
-            get
-            {
-                if (SelectedControlPointIndex == null)
-                    return null;
-
-                return controlPoints[SelectedControlPointIndex.Value];
-            }
+            return controlPoints[index].Selected;
         }
 
         /// <summary>
@@ -157,7 +129,6 @@ namespace AnimationCurves.GraphicalBaseClasses
         }
 
         #endregion
-
 
         /// <summary>
         /// Prepocitanie krivky podla potreby
@@ -238,9 +209,7 @@ namespace AnimationCurves.GraphicalBaseClasses
         /// </summary>
         public void SelectVertexByID(int vID)
         {
-            if (controlPoints[vID].Selected == true) return;
             controlPoints[vID].Selected = true;
-            SelectedControlPointIndices = [..SelectedControlPointIndices ?? [], vID];
         }
 
         /// <summary>
@@ -248,8 +217,8 @@ namespace AnimationCurves.GraphicalBaseClasses
         /// </summary>
         public void UnselectAllVertices()
         {
-            foreach (var v in controlPoints) v.Selected = false;
-            SelectedControlPointIndices = null;
+            foreach (var v in controlPoints) 
+                v.Selected = false;
         }
 
         /// <summary>
@@ -297,6 +266,15 @@ namespace AnimationCurves.GraphicalBaseClasses
         }
 
         /// <summary>
+        /// SelectedAny
+        /// </summary>
+        /// <returns></returns>
+        public bool SelectedAny()
+        {
+            return controlPoints.Any(x => x.Selected);
+        }
+
+        /// <summary>
         /// UpdateControlPointsPositionAfterDrag
         /// </summary>
         public void UpdateControlPointsPositionAfterDrag()
@@ -304,7 +282,7 @@ namespace AnimationCurves.GraphicalBaseClasses
             foreach (var node in controlPoints)
             {
                 if (node.Selected)
-                    node.PositionOffset = ControlPointOffset;
+                    node.Position = node.Position;
             }
         }
 

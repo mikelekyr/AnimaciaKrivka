@@ -86,19 +86,33 @@ namespace AnimationCurves
                 if (bezierCurve == null)
                     return;
 
-                if (state == EnumEditorState.PossibleDrag)
-                {
-                    state = EnumEditorState.NodeDragging;
-                    startMousePos = e.Location;
-                }
                 if (mode == EnumEditorMode.Edit)
                 {
-                    bool ctrlPressed = key == Keys.ControlKey;
-
-                    if (!bezierCurve.SelectNode(e.Location, ctrlPressed))
+                    if (state == EnumEditorState.PossibleDrag)
                     {
-                        state = EnumEditorState.SelectBegin;
-                        SelectionBoxFramed.InitSelectionBox(e.Location);
+                        int selectedCP = bezierCurve.GetVertexIDByUV(e.Location);
+
+                        if (selectedCP != CurveBase.ID_INVALID)
+                        {
+                            if (!bezierCurve.ControlPointIsSelected(selectedCP))
+                            {
+                                bezierCurve.UnselectAllVertices();
+                                bezierCurve.SelectVertexByID(selectedCP);
+                            }
+                        }
+
+                        state = EnumEditorState.NodeDragging;
+                        startMousePos = e.Location;
+                    }
+                    else
+                    {
+                        bool ctrlPressed = key == Keys.ControlKey;
+
+                        if (!bezierCurve.SelectNode(e.Location, ctrlPressed))
+                        {
+                            state = EnumEditorState.SelectBegin;
+                            SelectionBoxFramed.InitSelectionBox(e.Location);
+                        }
                     }
                 }
                 else if (mode == EnumEditorMode.InsertNode)
@@ -145,7 +159,7 @@ namespace AnimationCurves
 
                         if (state == EnumEditorState.NodeDragging)
                         {
-                            bezierCurve.ControlPointOffset = new(e.Location.X - startMousePos.X, e.Location.Y - startMousePos.Y);
+                            bezierCurve.ControlPointOffset = new(e.Location.X - startMousePos.X, -(e.Location.Y - startMousePos.Y));
                         }
                         else if (state == EnumEditorState.Selecting || state == EnumEditorState.SelectBegin)
                         {
@@ -205,7 +219,7 @@ namespace AnimationCurves
                         bezierCurve.SelectNode(SelectionBoxFramed.TrackedRectangle, ctrlPressed);
                     }
 
-                    bezierCurve.ControlPointOffset = new(0, 0);
+                    bezierCurve.ControlPointOffset = new();
                 }
             }
 
