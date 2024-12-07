@@ -13,7 +13,7 @@ namespace AnimationCurves.GraphicalBaseClasses
         protected readonly List<ControlPoint> controlPoints;
         protected List<MatrixF> curvePoints;
         protected List<float> segmentLengths;
-        protected int curvePrecision = 70;
+        protected int curvePrecision = 50;
         protected float length = 0;
 
         public Point ControlPointOffset
