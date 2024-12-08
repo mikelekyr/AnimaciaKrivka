@@ -3,12 +3,15 @@ using AnimationCurves.Tools;
 
 namespace AnimationCurves.GraphicalBaseClasses
 {
-    public sealed class Rectangle2D : IDrawable2DObject
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public sealed class Rectangle2D(MatrixF position, Size size, bool border = false) : IDrawable2DObject
     {
-        private MatrixF position;
-        private Size size;
+        private MatrixF position = position;
+        private Size size = size;
         private Color color = Color.Black;
-        private bool border;
+        private bool border = border;
 
         public MatrixF PositionMatrixF { get { return position; } set { position = value; } }
         public Point PositionPoint { get { return MatrixF.GetPoint(position); } set { position = MatrixF.BuildPointVector(value.X, value.Y); } }
@@ -19,15 +22,8 @@ namespace AnimationCurves.GraphicalBaseClasses
         public Size Size { get { return size; } set { size = value; } }
 
         /// <summary>
-        /// Constructor
+        /// Draw
         /// </summary>
-        public Rectangle2D(MatrixF position, Size size, bool border = false)
-        {
-            this.position = position;
-            this.size = size;
-            this.border = border;
-        }
-
         public void Draw(Graphics g)
         {
             if (size.Width <= 1 || size.Height <= 1)

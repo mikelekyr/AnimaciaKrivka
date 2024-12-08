@@ -40,7 +40,7 @@ namespace AnimationCurves.GraphicalClasses
             }
 
             // Draw lines between control points for better visibility
-            float[] dashValues = { 8, 4};
+            float[] dashValues = [8, 4];
 
             using Pen pen = new(Color.DarkGray);
 

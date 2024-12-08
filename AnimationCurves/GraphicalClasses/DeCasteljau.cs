@@ -4,6 +4,9 @@ namespace AnimationCurves.GraphicalClasses
 {
     public static class DeCasteljau
     {
+        /// <summary>
+        /// GetCurvePoint
+        /// </summary>
         public static MatrixF GetCurvePoint(List<MatrixF> controlPoints, float t)
         {
             if (controlPoints.Count == 1)
@@ -19,7 +22,10 @@ namespace AnimationCurves.GraphicalClasses
             return GetCurvePoint(nextLevel, t);
         }
 
-        public static List<MatrixF> GetCurvePoints(List<MatrixF> bezierControlPoints, int pointCount)
+        /// <summary>
+        /// GetCurvePoints
+        /// </summary>
+        public static List<MatrixF>? GetCurvePoints(List<MatrixF> bezierControlPoints, int pointCount)
         {
             if (pointCount < 2)
                 throw new ApplicationException($"Invalid parameter: you must request at least 2 points to be returned from the curve!");
@@ -44,6 +50,9 @@ namespace AnimationCurves.GraphicalClasses
             return new List<MatrixF>(result);
         }
 
+        /// <summary>
+        /// Lerp
+        /// </summary>
         private static MatrixF Lerp(MatrixF p1, MatrixF p2, float t)
         {
             return new MatrixF(new float[,] {
