@@ -6,37 +6,31 @@ namespace AnimationCurves.GraphicalClasses
 {
     public sealed class BezierCurve : CurveBase, IDrawable2DObject
     {
-        private bool drawAllControls = false;
+        public bool DrawAllControls = false;
 
-        public bool DrawAllControls
-        {
-            get
-            {
-                return drawAllControls;
-            }
-            set
-            {
-                drawAllControls = value;
-            }
-        }
-
+        /// <summary>
+        /// Draw
+        /// </summary>
         public void Draw(Graphics g)
         {
-            // draw bezier curve points
-            for (int i = 0; i < curvePoints.Count - 1; i++)
+            if (curvePoints != null)
             {
-                PointF point1 = CoordTrans.FromXYtoUVF(curvePoints[i]);
-                PointF point2 = CoordTrans.FromXYtoUVF(curvePoints[i + 1]);
-
-                g.DrawLine(Pens.Pink, point1, point2);
-
-                Point2D pt = new(curvePoints[i])
+                // draw bezier curve points
+                for (int i = 0; i < curvePoints.Count - 1; i++)
                 {
-                    Antialiased = true,
-                    Color = Color.Red
-                };
+                    PointF point1 = CoordTrans.FromXYtoUVF(curvePoints[i]);
+                    PointF point2 = CoordTrans.FromXYtoUVF(curvePoints[i + 1]);
 
-                pt.Draw(g);
+                    g.DrawLine(Pens.Pink, point1, point2);
+
+                    Point2D pt = new(curvePoints[i])
+                    {
+                        Antialiased = true,
+                        Color = Color.Red
+                    };
+
+                    pt.Draw(g);
+                }
             }
 
             // Draw lines between control points for better visibility
@@ -44,7 +38,7 @@ namespace AnimationCurves.GraphicalClasses
 
             using Pen pen = new(Color.DarkGray);
 
-            if (drawAllControls)
+            if (DrawAllControls)
             {
                 for (int i = 0; i < controlPoints.Count - 1; i++)
                 {
@@ -77,7 +71,7 @@ namespace AnimationCurves.GraphicalClasses
                 bool isFirst = index == 0;
                 bool isLast = index == controlPoints.Count - 1;
 
-                if (!drawAllControls && (isFirst || isLast))
+                if (!DrawAllControls && (isFirst || isLast))
                     continue;
 
                 string name = "C" + index.ToString();
@@ -101,17 +95,22 @@ namespace AnimationCurves.GraphicalClasses
                 g.FillRectangle(isFirst || isLast ? Brushes.BlueViolet : Brushes.LightSlateGray, rect);
                 g.DrawRectangle(Pens.Black, rect);
 
-                if (drawAllControls)
+                if (DrawAllControls)
                     g.DrawString(name, font, Brushes.Black, new Point(rect.X + 6, rect.Y + 6));
             }
         }
 
-
+        /// <summary>
+        /// GetPointAndAngleOnCurve
+        /// </summary>
         public override MatrixF GetPointAndAngleOnCurve(float time, out float angle)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// RecalculateCurve
+        /// </summary>
         protected override void RecalculateCurve()
         {
             curvePoints = DeCasteljau.GetCurvePoints(CurvePointsPositions, curvePrecision);

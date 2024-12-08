@@ -11,7 +11,7 @@ namespace AnimationCurves.GraphicalBaseClasses
         #region Properties
 
         protected readonly List<ControlPoint> controlPoints;
-        protected List<MatrixF> curvePoints;
+        protected List<MatrixF>? curvePoints;
         protected List<float> segmentLengths;
         protected int curvePrecision = 50;
         protected float length = 0;
@@ -184,7 +184,7 @@ namespace AnimationCurves.GraphicalBaseClasses
         {
             for (int i = controlPoints.Count - 1; i >= 0; i--)
             {
-                if (ControlPoint.IsHitByUV(controlPoints[i], p))
+                if (controlPoints[i].IsHitByUV(p))
                     return i;
             }
             return ID_INVALID;
@@ -231,7 +231,7 @@ namespace AnimationCurves.GraphicalBaseClasses
 
             foreach (var node in controlPoints)
             {
-                if (ControlPoint.IsHitByUV(node, mousePosition))
+                if (node.IsHitByUV(mousePosition))
                 {
                     node.Selected = true;
                     return true;
@@ -289,7 +289,7 @@ namespace AnimationCurves.GraphicalBaseClasses
         /// <summary>
         /// HoverOverSelectedNode
         /// </summary>
-        public bool HoverOverSelectedNode(Point parMousePosition)
+        public bool HoverOverControlPoint(Point parMousePosition)
         {
             var nodeMouseOver = GetVertexIDByUV(parMousePosition);
 

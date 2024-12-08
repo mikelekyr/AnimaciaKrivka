@@ -245,7 +245,7 @@ namespace AnimationCurves
                     if (bezierCurve == null)
                         return;
 
-                    if (bezierCurve.HoverOverSelectedNode(e.Location))
+                    if (bezierCurve.HoverOverControlPoint(e.Location))
                     {
                         state = EnumEditorState.PossibleDrag;
                         Cursor = Cursors.Hand;
@@ -261,7 +261,7 @@ namespace AnimationCurves
                     if (bezierCubicSpline == null)
                         return;
 
-                    if (bezierCubicSpline.HoverOverSelectedNode(e.Location))
+                    if (bezierCubicSpline.HoverOverControlPointSpline(e.Location))
                     {
                         state = EnumEditorState.PossibleDrag;
                         Cursor = Cursors.Hand;
