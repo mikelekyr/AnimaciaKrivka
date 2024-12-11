@@ -1,12 +1,14 @@
 using AnimationCurves.Enums;
 using AnimationCurves.GraphicalBaseClasses;
 using AnimationCurves.GraphicalClasses;
+using AnimationCurves.GraphicalObjects;
 using AnimationCurves.Tools;
 
 namespace AnimationCurves
 {
     public partial class FormMain : Form
     {
+        private Airplane airplane = new();
         private BezierCurve? bezierCurve;
         private BezierCubicSpline? bezierCubicSpline;
         private EnumEditorMode mode;
@@ -71,6 +73,11 @@ namespace AnimationCurves
             {
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
                 SelectionBoxFramed.Draw(g);
+            }
+            else
+            {
+                airplane.Transform(MatrixF.GetIdentityMatrix(3));
+                airplane.Draw(g);
             }
         }
 
