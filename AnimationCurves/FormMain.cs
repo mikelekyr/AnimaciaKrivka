@@ -76,7 +76,21 @@ namespace AnimationCurves
             }
             else
             {
-                airplane.Transform(MatrixF.GetIdentityMatrix(3));
+                var matrixTranslate = MatrixF.GetIdentityMatrix(3);
+                matrixTranslate[0, 2] = 500.0f;
+                matrixTranslate[1, 2] = 350.0f;
+
+                var matrixScale = MatrixF.GetIdentityMatrix(3);
+                matrixScale[0, 0] = 5.0f;
+                matrixScale[1, 1] = 5.0f;
+
+                var matrixRotate = MatrixF.GetIdentityMatrix(3);
+                matrixRotate[0, 0] = (float)Math.Cos(Math.PI / 2.0);
+                matrixRotate[0, 1] = -(float)Math.Sin(Math.PI / 2.0);
+                matrixRotate[1, 0] = (float)Math.Sin(Math.PI / 2.0);
+                matrixRotate[1, 1] = (float)Math.Cos(Math.PI / 2.0);
+
+                airplane.Transform(matrixTranslate * matrixScale * matrixRotate);
                 airplane.Draw(g);
             }
         }
