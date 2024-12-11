@@ -410,11 +410,12 @@ namespace AnimationCurves
 
             double elapsedMS = stopwatch.Elapsed.TotalSeconds % 7;
 
-            var pointOnCurve = DeCasteljau.GetCurvePoint(bezierCurve.CurvePointsPositions, (float)(elapsedMS / 7.0f));
+            float angle = 0.0f;
+            var pointOnCurve = DeCasteljau.GetCurvePoint(bezierCurve.CurvePointsPositions, (float)(elapsedMS / 7.0f), ref angle);
 
             var matrixTranslate = MatrixF.BuildTranslationMatrix(pointOnCurve[0,0], pointOnCurve[1, 0]);
             var matrixScale = MatrixF.BuildScalingMatrix(5.0f, 5.0f);
-            var matrixRotate = MatrixF.BuildRotationMatrix((float)(Math.PI / 2.0));
+            var matrixRotate = MatrixF.BuildRotationMatrix(angle);
 
             airplane.Transform(matrixTranslate * matrixScale * matrixRotate);
 
