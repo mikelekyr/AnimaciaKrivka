@@ -153,7 +153,7 @@ namespace AnimationCurves
             // 
             // timerAnimation
             // 
-            timerAnimation.Interval = 50;
+            timerAnimation.Interval = 16;
             timerAnimation.Tick += timerAnimation_Tick;
             // 
             // FormMain

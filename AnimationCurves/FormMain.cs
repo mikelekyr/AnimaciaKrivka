@@ -3,11 +3,13 @@ using AnimationCurves.GraphicalBaseClasses;
 using AnimationCurves.GraphicalClasses;
 using AnimationCurves.GraphicalObjects;
 using AnimationCurves.Tools;
+using System.Diagnostics;
 
 namespace AnimationCurves
 {
     public partial class FormMain : Form
     {
+        private readonly Stopwatch stopwatch = new();
         private Airplane airplane = new();
         private BezierCurve? bezierCurve;
         private BezierCubicSpline? bezierCubicSpline;
@@ -28,6 +30,7 @@ namespace AnimationCurves
             curveType = EnumCurveType.BezierCurve;
 
             timerAnimation.Start();
+            stopwatch.Start();
 
             ResetInitialObject();
         }
@@ -402,7 +405,14 @@ namespace AnimationCurves
 
         private void timerAnimation_Tick(object sender, EventArgs e)
         {
-            var matrixTranslate = MatrixF.BuildTranslationMatrix(500.0f, 350.0f);
+            if (bezierCurve == null)
+                return;
+
+            double elapsedMS = stopwatch.Elapsed.TotalSeconds % 7;
+
+            var pointOnCurve = DeCasteljau.GetCurvePoint(bezierCurve.CurvePointsPositions, (float)(elapsedMS / 7.0f));
+
+            var matrixTranslate = MatrixF.BuildTranslationMatrix(pointOnCurve[0,0], pointOnCurve[1, 0]);
             var matrixScale = MatrixF.BuildScalingMatrix(5.0f, 5.0f);
             var matrixRotate = MatrixF.BuildRotationMatrix((float)(Math.PI / 2.0));
 
