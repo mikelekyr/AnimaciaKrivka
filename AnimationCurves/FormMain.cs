@@ -43,7 +43,7 @@ namespace AnimationCurves
                     bezierCurve.AddControlPoint(
                     new ControlPoint(MatrixF.BuildPointVector(((float)rand.NextDouble() * CoordTrans.xRange) + CoordTrans.xMin, ((float)rand.NextDouble() * CoordTrans.yRange) + CoordTrans.yMin)));
 
-                bezierCurve.DrawAllControls = true; 
+                bezierCurve.DrawAllControls = true;
             }
             else if (curveType == EnumCurveType.BezierCubicSpline)
             {
@@ -76,21 +76,7 @@ namespace AnimationCurves
             }
             else
             {
-                var matrixTranslate = MatrixF.GetIdentityMatrix(3);
-                matrixTranslate[0, 2] = 500.0f;
-                matrixTranslate[1, 2] = 350.0f;
 
-                var matrixScale = MatrixF.GetIdentityMatrix(3);
-                matrixScale[0, 0] = 5.0f;
-                matrixScale[1, 1] = 5.0f;
-
-                var matrixRotate = MatrixF.GetIdentityMatrix(3);
-                matrixRotate[0, 0] = (float)Math.Cos(Math.PI / 2.0);
-                matrixRotate[0, 1] = -(float)Math.Sin(Math.PI / 2.0);
-                matrixRotate[1, 0] = (float)Math.Sin(Math.PI / 2.0);
-                matrixRotate[1, 1] = (float)Math.Cos(Math.PI / 2.0);
-
-                airplane.Transform(matrixTranslate * matrixScale * matrixRotate);
                 airplane.Draw(g);
             }
         }
@@ -258,7 +244,7 @@ namespace AnimationCurves
                         doubleBufferPanel.Invalidate();
                     }
                 }
-            } 
+            }
             else if (e.Button == MouseButtons.None)
             {
                 if (curveType == EnumCurveType.BezierCurve)
@@ -295,7 +281,7 @@ namespace AnimationCurves
                 }
             }
         }
-        
+
         /// <summary>
         /// Mouse up
         /// </summary>
@@ -410,6 +396,27 @@ namespace AnimationCurves
                 curveType = EnumCurveType.BezierCubicSpline;
                 ResetInitialObject();
             }
+        }
+
+        private void timerAnimation_Tick(object sender, EventArgs e)
+        {
+            var matrixTranslate = MatrixF.GetIdentityMatrix(3);
+            matrixTranslate[0, 2] = 500.0f;
+            matrixTranslate[1, 2] = 350.0f;
+
+            var matrixScale = MatrixF.GetIdentityMatrix(3);
+            matrixScale[0, 0] = 5.0f;
+            matrixScale[1, 1] = 5.0f;
+
+            var matrixRotate = MatrixF.GetIdentityMatrix(3);
+            matrixRotate[0, 0] = (float)Math.Cos(Math.PI / 2.0);
+            matrixRotate[0, 1] = -(float)Math.Sin(Math.PI / 2.0);
+            matrixRotate[1, 0] = (float)Math.Sin(Math.PI / 2.0);
+            matrixRotate[1, 1] = (float)Math.Cos(Math.PI / 2.0);
+
+            airplane.Transform(matrixTranslate * matrixScale * matrixRotate);
+
+            doubleBufferPanel.Invalidate();
         }
     }
 }

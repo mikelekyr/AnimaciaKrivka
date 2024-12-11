@@ -30,6 +30,7 @@ namespace AnimationCurves
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             panel1 = new Panel();
             groupBox1 = new GroupBox();
             radioButtonBezierCurve = new RadioButton();
@@ -39,6 +40,7 @@ namespace AnimationCurves
             radioButtonInsertNode = new RadioButton();
             radioButtonEdit = new RadioButton();
             doubleBufferPanel = new DoubleBufferPanel();
+            timerAnimation = new System.Windows.Forms.Timer(components);
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBoxState.SuspendLayout();
@@ -149,6 +151,11 @@ namespace AnimationCurves
             doubleBufferPanel.MouseMove += DoubleBufferPanel_MouseMove;
             doubleBufferPanel.MouseUp += DoubleBufferPanel_MouseUp;
             // 
+            // timerAnimation
+            // 
+            timerAnimation.Interval = 50;
+            timerAnimation.Tick += timerAnimation_Tick;
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -181,5 +188,6 @@ namespace AnimationCurves
         private GroupBox groupBox1;
         private RadioButton radioButtonBezierSpline;
         private RadioButton radioButtonBezierCurve;
+        private System.Windows.Forms.Timer timerAnimation;
     }
 }
