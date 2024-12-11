@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Drawing.Drawing2D;
+using System.Text;
 
 namespace AnimationCurves.Tools
 {
@@ -336,6 +337,51 @@ namespace AnimationCurves.Tools
                 throw new ApplicationException($"Wrong data input in GetPoint!");
 
             return new Point((int)pointVector[0, 0], (int)pointVector[1, 0]);
+        }
+
+        /// <summary>
+		/// BuildTranslationMatrix
+		/// </summary>
+		public static MatrixF BuildTranslationMatrix(float x, float y)
+        {
+            var matrixValues = new float[,]
+            {
+                { 1, 0, x },
+                { 0, 1, y },
+                { 0, 0, 1 }
+            };
+
+            return new MatrixF(matrixValues);
+        }
+
+        /// <summary>
+        /// Create a rotation matrix that rotates values around point (0,0)
+        /// </summary>
+        public static MatrixF BuildRotationMatrix(float angle)
+        {
+            var matrixValues = new float[,]
+            {
+                { (float)Math.Cos(angle), (float)-Math.Sin(angle), 0 },
+                { (float)Math.Sin(angle), (float)Math.Cos(angle), 0 },
+                { 0, 0, 1 }
+            };
+
+            return new MatrixF(matrixValues);
+        }
+
+        /// <summary>
+        /// BuildScalingMatrix
+        /// </summary>
+        public static MatrixF BuildScalingMatrix(float xScale, float yScale)
+        {
+            var matrixValues = new float[,]
+            {
+                { xScale, 0, 0 },
+                { 0, yScale, 0 },
+                { 0, 0, 1 }
+            };
+
+            return new MatrixF(matrixValues);
         }
 
         #endregion

@@ -7,7 +7,7 @@ namespace AnimationCurves.GraphicalObjects
     public sealed class Airplane : IDrawable2DObject
     {
         private readonly MatrixF[] vertexBufferOrig;
-        private MatrixF[] vertexBuffer = [];
+        private MatrixF[] vertexBuffer;
         private readonly AbscissaIndices[] indexBuffer;
 
         public Airplane()
@@ -56,6 +56,8 @@ namespace AnimationCurves.GraphicalObjects
 				new AbscissaIndices(16,17),	//U18
 				new AbscissaIndices(17,0),	//U19
 			];
+
+            vertexBuffer = vertexBufferOrig;
         }
 
         /// <summary>
