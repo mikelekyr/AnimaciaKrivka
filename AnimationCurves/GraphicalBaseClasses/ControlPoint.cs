@@ -28,8 +28,8 @@ namespace AnimationCurves.GraphicalBaseClasses
         public bool IsHitByUV(Point p)
         {
             MatrixF xyMatrix = CoordTrans.FromUVtoXY(p);
-            PointF xyPoint = new((float)xyMatrix[0, 0] - 5, (float)xyMatrix[1, 0] - 5);
-            RectangleF r = new(xyPoint, new Size(10, 10));
+            PointF xyPoint = new((float)xyMatrix[0, 0] - 20, (float)xyMatrix[1, 0] - 20);
+            RectangleF r = new(xyPoint, new Size(40, 40));
             PointF point = new((float)Position[0, 0], (float)Position[1, 0]);
             return r.Contains(point);
         }

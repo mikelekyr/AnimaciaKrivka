@@ -29,8 +29,8 @@ namespace AnimationCurves
 
             curveType = EnumCurveType.BezierCurve;
 
-            timerAnimation.Start();
-            stopwatch.Start();
+            //timerAnimation.Start();
+            //stopwatch.Start();
 
             ResetInitialObject();
         }
@@ -46,7 +46,7 @@ namespace AnimationCurves
 
                 for (int i = 0; i < 4; i++)
                     bezierCurve.AddControlPoint(
-                    new ControlPoint(MatrixF.BuildPointVector(((float)rand.NextDouble() * CoordTrans.xRange) + CoordTrans.xMin, ((float)rand.NextDouble() * CoordTrans.yRange) + CoordTrans.yMin)));
+                    new ControlPoint(MatrixF.BuildPointVector(((float)rand.NextDouble() * CoordTrans.XRange) + CoordTrans.XMin, ((float)rand.NextDouble() * CoordTrans.YRange) + CoordTrans.YMin)));
 
                 bezierCurve.DrawAllControls = true;
             }
@@ -81,8 +81,7 @@ namespace AnimationCurves
             }
             else
             {
-
-                airplane.Draw(g);
+                //airplane.Draw(g);
             }
         }
 
@@ -213,7 +212,7 @@ namespace AnimationCurves
 
                         if (state == EnumEditorState.NodeDragging)
                         {
-                            bezierCurve.ControlPointOffset = new(e.Location.X - startMousePos.X, -(e.Location.Y - startMousePos.Y));
+                            bezierCurve.ControlPointOffset = new(e.Location.X - startMousePos.X, e.Location.Y - startMousePos.Y);
                         }
                         else if (state == EnumEditorState.Selecting || state == EnumEditorState.SelectBegin)
                         {
@@ -234,7 +233,7 @@ namespace AnimationCurves
 
                         if (state == EnumEditorState.NodeDragging)
                         {
-                            bezierCubicSpline.ControlPointOffset = new(e.Location.X - startMousePos.X, -(e.Location.Y - startMousePos.Y));
+                            bezierCubicSpline.ControlPointOffset = new(e.Location.X - startMousePos.X, e.Location.Y - startMousePos.Y);
                         }
                         else if (state == EnumEditorState.Selecting || state == EnumEditorState.SelectBegin)
                         {

@@ -2,20 +2,25 @@
 {
     public static class CoordTrans
     {
-        public static float xMin = 0f;
-        public static float xMax = 1168f;
-        public static float yMin = 0f;
-        public static float yMax = 728f;
+        private static readonly float xMin = 0f;
+        private static readonly float xMax = 2800f;
+        private static readonly float yMin = 0f;
+        private static readonly float yMax = 2070f;
 
-        public static int uMin = 0;
-        public static int uMax = 1168;
-        public static int vMin = 728;
-        public static int vMax = 0;
+        private static readonly int uMin = 0;
+        private static readonly int uMax = 1120;
+        private static readonly int vMin = 828;
+        private static readonly int vMax = 0;
 
-        public static float xRange { get { return Math.Abs(xMax - xMin); } }
-        public static float yRange { get { return Math.Abs(yMax - yMin); } }
-        public static float uRange { get { return Math.Abs(uMax - uMin); } }
-        public static float vRange { get { return Math.Abs(vMax - vMin); } }
+        public static float XRange { get { return Math.Abs(xMax - xMin); } }
+        public static float YRange { get { return Math.Abs(yMax - yMin); } }
+        public static float URange { get { return Math.Abs(uMax - uMin); } }
+        public static float VRange { get { return Math.Abs(vMax - vMin); } }
+
+        public static float XMin { get { return xMin; } }
+        public static float YMin { get { return yMin; } }
+        public static float XMax { get { return xMax; } }
+        public static float YMax { get { return yMax; } }
 
         /// <summary>
         /// Transforms world coordinates to screen coordinates
@@ -87,6 +92,17 @@
         }
 
         /// <summary>
+        /// Transformation from window coord (U,V) to world coord (X,Y)
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public static PointF FromUVtoXYF(Point p)
+        {
+            return new PointF((p.X - xMin) / (xMax - xMin) * (uMax - uMin) + uMin,
+                              (p.Y - yMin) / (yMax - yMin) * (vMax - vMin) + vMin);
+        }
+
+        /// <summary>
         /// Transformation from float window coord (U,V) to world coord (X,Y)
         /// </summary>
         /// <param name="p"></param>
@@ -119,9 +135,12 @@
         /// <returns>MatrixF vector</returns>
         public static MatrixF MatrixFWithPointOffset(MatrixF point, Point offset)
         {
+            float ratioX = (uMax - uMin) / (xMax - xMin);
+            float ratioY = (vMax - vMin) / (yMax - yMin);
+
             return new MatrixF(new float[,] {
-                { point[0,0] + offset.X},
-                { point[1,0] + offset.Y},
+                { point[0,0] + (offset.X / ratioX)},
+                { point[1,0] + (offset.Y / ratioY)},
                 { 1 }});
         }
     }

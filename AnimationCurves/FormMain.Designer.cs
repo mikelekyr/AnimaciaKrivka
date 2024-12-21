@@ -48,12 +48,13 @@ namespace AnimationCurves
             // 
             // panel1
             // 
+            panel1.BackColor = Color.Silver;
             panel1.Controls.Add(groupBox1);
             panel1.Controls.Add(groupBoxState);
             panel1.Dock = DockStyle.Left;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(190, 728);
+            panel1.Size = new Size(190, 828);
             panel1.TabIndex = 0;
             // 
             // groupBox1
@@ -141,10 +142,9 @@ namespace AnimationCurves
             // doubleBufferPanel
             // 
             doubleBufferPanel.BackColor = Color.White;
-            doubleBufferPanel.Dock = DockStyle.Fill;
             doubleBufferPanel.Location = new Point(190, 0);
             doubleBufferPanel.Name = "doubleBufferPanel";
-            doubleBufferPanel.Size = new Size(1168, 728);
+            doubleBufferPanel.Size = new Size(1120, 828);
             doubleBufferPanel.TabIndex = 1;
             doubleBufferPanel.Paint += DoubleBufferPanel_Paint;
             doubleBufferPanel.MouseDown += DoubleBufferPanel_MouseDown;
@@ -160,9 +160,11 @@ namespace AnimationCurves
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1358, 728);
+            BackColor = SystemColors.Control;
+            ClientSize = new Size(1310, 828);
             Controls.Add(doubleBufferPanel);
             Controls.Add(panel1);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             KeyPreview = true;
             Name = "FormMain";
             StartPosition = FormStartPosition.CenterScreen;
