@@ -54,9 +54,11 @@ namespace AnimationCurves.GraphicalClasses
 
                     var cp1 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
                     segment.Curve.AddControlPoint(cp1);
+                    cpsArray[index].NextControlPoint = cp1;
 
                     var cp2 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
                     segment.Curve.AddControlPoint(cp2);
+                    cpsArray[index + 1].PreviousControlPoint = cp2;
 
                     segment.Curve.AddControlPoint(controlPoints[index + 1]);
                 }
@@ -88,9 +90,11 @@ namespace AnimationCurves.GraphicalClasses
 
                     var cp1 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
                     segment.Curve.AddControlPoint(cp1);
+                    cpsArray[index - 1].NextControlPoint = cp1;
 
                     var cp2 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
                     segment.Curve.AddControlPoint(cp2);
+                    cpsArray[index].PreviousControlPoint = cp2;
 
                     segment.Curve.AddControlPoint(controlPoints[index]);
                 }
@@ -122,6 +126,7 @@ namespace AnimationCurves.GraphicalClasses
 
                     var cp1 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
                     segment.Curve.AddControlPoint(cp1);
+                    cpsArray[index].NextControlPoint = cp1;
 
                     startX = controlPoints[index].Position[0, 0];
                     startY = controlPoints[index].Position[1, 0];
@@ -140,6 +145,7 @@ namespace AnimationCurves.GraphicalClasses
 
                     var cp2 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
                     segment.Curve.AddControlPoint(cp2);
+                    cpsArray[index + 1].PreviousControlPoint = cp2;
 
                     segment.Curve.AddControlPoint(controlPoints[index + 1]);
                 }
