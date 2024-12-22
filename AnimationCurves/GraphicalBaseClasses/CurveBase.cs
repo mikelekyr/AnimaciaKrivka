@@ -1,8 +1,9 @@
-﻿using AnimationCurves.Tools;
+﻿using AnimationCurves.Interfaces;
+using AnimationCurves.Tools;
 
 namespace AnimationCurves.GraphicalBaseClasses
 {
-    public abstract class CurveBase
+    public abstract class CurveBase: IDrawable2DObject
     {
         #region Constants
         public const int ID_INVALID = -1;
@@ -294,6 +295,14 @@ namespace AnimationCurves.GraphicalBaseClasses
             var nodeMouseOver = GetVertexIDByUV(parMousePosition);
 
             return (nodeMouseOver != ID_INVALID);
+        }
+
+        /// <summary>
+        /// Draw
+        /// </summary>
+        public virtual void Draw(Graphics g)
+        {
+
         }
 
         #endregion

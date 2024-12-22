@@ -4,14 +4,14 @@ using AnimationCurves.Tools;
 
 namespace AnimationCurves.GraphicalClasses
 {
-    public sealed class BezierCurve : CurveBase, IDrawable2DObject
+    public sealed class BezierCurve : CurveBase
     {
         public bool DrawAllControls = false;
 
         /// <summary>
         /// Draw
         /// </summary>
-        public void Draw(Graphics g)
+        public override void Draw(Graphics g)
         {
             if (curvePoints != null)
             {

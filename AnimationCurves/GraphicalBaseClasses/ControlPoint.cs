@@ -2,7 +2,7 @@
 
 namespace AnimationCurves.GraphicalBaseClasses
 {
-    public sealed class ControlPoint(MatrixF paPosition, bool paSelected = false)
+    public class ControlPoint(MatrixF paPosition, bool paSelected = false)
     {
         private MatrixF position = paPosition;
         private bool selected = paSelected;

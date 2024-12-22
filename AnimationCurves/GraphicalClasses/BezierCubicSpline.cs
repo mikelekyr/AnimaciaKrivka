@@ -6,18 +6,13 @@ namespace AnimationCurves.GraphicalClasses
 {
     public class BezierCubicSpline : CurveBase, IDrawable2DObject
     {
-        private readonly List<BezierWrapper> bezierSegments;
-
-        public BezierCubicSpline()
+        public override void Draw(Graphics g)
         {
-            bezierSegments = [];
-        }
-
-        public void Draw(Graphics g)
-        {
-            foreach (var segment in bezierSegments)
+            foreach (var cp in controlPoints)
             {
-                segment.Curve.Draw(g);
+                var cps = (cp as ControlPointSpline);
+
+                cps?.Next?.Curve.Draw(g);
             }
 
             using Font font = new("Arial", 8);
@@ -56,8 +51,6 @@ namespace AnimationCurves.GraphicalClasses
         /// </summary>
         protected override void RecalculateCurve()
         {
-            bezierSegments.Clear();
-
             if (controlPoints.Count < 3)
             {
                 return;
@@ -65,25 +58,32 @@ namespace AnimationCurves.GraphicalClasses
 
             float divConst = 5.0f;
 
-            foreach (var (cp, index) in controlPoints.Select((value, i) => (value, i)))
-            {
-                BezierWrapper segment = new(new BezierCurve());
+            var cpsArray = controlPoints.Cast<ControlPointSpline>().ToArray();
 
+            foreach (var (cp, index) in cpsArray.Select((value, i) => (value, i)))
+            {
                 bool isFirst = index == 0;
                 bool isLast = index == controlPoints.Count - 1;
 
+                if (cpsArray[index].Next != null)
+                    continue;
+
                 if (isFirst)
                 {
+                    var segment = new CurveSegment(new BezierCurve());
+                    cpsArray[index].Next = segment;
+                    cpsArray[index+1].Previous = segment;
+
                     segment.Curve.AddControlPoint(controlPoints[index]);
 
-                    float startX = controlPoints[index].Position[0, 0];
-                    float startY = controlPoints[index].Position[1, 0];
+                    float startX = cpsArray[index].Position[0, 0];
+                    float startY = cpsArray[index].Position[1, 0];
 
-                    float endX = controlPoints[index + 2].Position[0, 0];
-                    float endY = controlPoints[index + 2].Position[1, 0];
+                    float endX = cpsArray[index + 2].Position[0, 0];
+                    float endY = cpsArray[index + 2].Position[1, 0];
 
-                    float refX = controlPoints[index + 1].Position[0, 0];
-                    float refY = controlPoints[index + 1].Position[1, 0];
+                    float refX = cpsArray[index + 1].Position[0, 0];
+                    float refY = cpsArray[index + 1].Position[1, 0];
 
                     float diffX = (endX - startX) / divConst;
                     float diffY = (endY - startY) / divConst;
@@ -93,47 +93,52 @@ namespace AnimationCurves.GraphicalClasses
 
                     var cp1 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
                     segment.Curve.AddControlPoint(cp1);
-                    segment.ControlPoint1 = cp1;
+                    //segment.ControlPoint1 = cp1;
 
                     var cp2 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
                     segment.Curve.AddControlPoint(cp2);
-                    segment.ControlPoint2 = cp2;    
+                    //segment.ControlPoint2 = cp2;    
 
                     segment.Curve.AddControlPoint(controlPoints[index + 1]);
                 }
                 else if (isLast)
                 {
-                    segment.Curve.AddControlPoint(controlPoints[index - 1]);
+                    //var segment = new CurveSegment(new BezierCurve());
+                    //cpsArray[index].Next = segment;
+                    //cpsArray[index + 1].Previous = segment;
 
-                    float startX = controlPoints[index - 2].Position[0, 0];
-                    float startY = controlPoints[index - 2].Position[1, 0];
+                    //segment.Curve.AddControlPoint(controlPoints[index - 1]);
 
-                    float endX = controlPoints[index].Position[0, 0];
-                    float endY = controlPoints[index].Position[1, 0];
+                    //float startX = controlPoints[index - 2].Position[0, 0];
+                    //float startY = controlPoints[index - 2].Position[1, 0];
 
-                    float refX = controlPoints[index - 1].Position[0, 0];
-                    float refY = controlPoints[index - 1].Position[1, 0];
+                    //float endX = controlPoints[index].Position[0, 0];
+                    //float endY = controlPoints[index].Position[1, 0];
 
-                    float diffX = (endX - startX) / divConst;
-                    float diffY = (endY - startY) / divConst;
+                    //float refX = controlPoints[index - 1].Position[0, 0];
+                    //float refY = controlPoints[index - 1].Position[1, 0];
 
-                    refX += diffX;
-                    refY += diffY;
+                    //float diffX = (endX - startX) / divConst;
+                    //float diffY = (endY - startY) / divConst;
 
-                    var cp1 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
-                    segment.Curve.AddControlPoint(cp1);
-                    segment.ControlPoint1 = cp1;
+                    //refX += diffX;
+                    //refY += diffY;
 
-                    var cp2 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
-                    segment.Curve.AddControlPoint(cp2);
-                    segment.ControlPoint2 = cp2;
+                    //var cp1 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
+                    //segment.Curve.AddControlPoint(cp1);
+                    ////segment.ControlPoint1 = cp1;
 
-                    segment.Curve.AddControlPoint(controlPoints[index]);
+                    //var cp2 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
+                    //segment.Curve.AddControlPoint(cp2);
+                    ////segment.ControlPoint2 = cp2;
+
+                    //segment.Curve.AddControlPoint(controlPoints[index]);
                 }
                 else if (!isLast && !isFirst && controlPoints.Count > 3)
                 {
-                    if (index == 1)
-                        continue;
+                    var segment = new CurveSegment(new BezierCurve());
+                    cpsArray[index].Next = segment;
+                    cpsArray[index + 1].Previous = segment;
 
                     segment.Curve.AddControlPoint(controlPoints[index - 1]);
 
@@ -154,7 +159,6 @@ namespace AnimationCurves.GraphicalClasses
 
                     var cp1 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
                     segment.Curve.AddControlPoint(cp1);
-                    segment.ControlPoint1 = cp1;
 
                     startX = controlPoints[index - 1].Position[0, 0];
                     startY = controlPoints[index - 1].Position[1, 0];
@@ -173,13 +177,9 @@ namespace AnimationCurves.GraphicalClasses
 
                     var cp2 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
                     segment.Curve.AddControlPoint(cp2);
-                    segment.ControlPoint2 = cp2;
                     
                     segment.Curve.AddControlPoint(controlPoints[index]);
                 }
-
-                if (segment.Curve.ControlPoints.Count >= 3)
-                    bezierSegments.Add(segment);
             }
         }
 
@@ -191,14 +191,14 @@ namespace AnimationCurves.GraphicalClasses
             if (HoverOverControlPoint(mousePosition))
                 return true;
 
-            foreach (var segment in bezierSegments)
-            {
-                if (segment.ControlPoint1 != null && segment.ControlPoint1.IsHitByUV(mousePosition))
-                    return true;
+            //foreach (var segment in bezierSegments)
+            //{
+            //    if (segment.ControlPoint1 != null && segment.ControlPoint1.IsHitByUV(mousePosition))
+            //        return true;
 
-                if (segment.ControlPoint2 != null && segment.ControlPoint2.IsHitByUV(mousePosition))
-                    return true;
-            }
+            //    if (segment.ControlPoint2 != null && segment.ControlPoint2.IsHitByUV(mousePosition))
+            //        return true;
+            //}
 
             return false;
         }

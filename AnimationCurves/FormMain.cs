@@ -10,7 +10,7 @@ namespace AnimationCurves
     public partial class FormMain : Form
     {
         private readonly Stopwatch stopwatch = new();
-        private Airplane airplane = new();
+        private Airplane? airplane;
         private BezierCurve? bezierCurve;
         private BezierCubicSpline? bezierCubicSpline;
         private EnumEditorMode mode;
@@ -24,10 +24,10 @@ namespace AnimationCurves
         {
             InitializeComponent();
 
-            mode = EnumEditorMode.Edit;
+            mode = EnumEditorMode.InsertNode;
             state = EnumEditorState.None;
 
-            curveType = EnumCurveType.BezierCurve;
+            curveType = EnumCurveType.BezierCubicSpline;
 
             //timerAnimation.Start();
             //stopwatch.Start();
@@ -183,7 +183,7 @@ namespace AnimationCurves
                 {
                     MatrixF controlPoint = CoordTrans.FromUVtoXY(e.Location);
 
-                    bezierCubicSpline.AddControlPoint(new ControlPoint(controlPoint));
+                    bezierCubicSpline.AddControlPoint(new ControlPointSpline(controlPoint));
                 }
                 else if (mode == EnumEditorMode.DeleteNode)
                 {
@@ -402,7 +402,12 @@ namespace AnimationCurves
             }
         }
 
-        private void timerAnimation_Tick(object sender, EventArgs e)
+        /// <summary>
+        /// TimerAnimation_Tick
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TimerAnimation_Tick(object sender, EventArgs e)
         {
             if (bezierCurve == null)
                 return;
@@ -416,7 +421,7 @@ namespace AnimationCurves
             var matrixScale = MatrixF.BuildScalingMatrix(5.0f, 5.0f);
             var matrixRotate = MatrixF.BuildRotationMatrix(angle);
 
-            airplane.Transform(matrixTranslate * matrixScale * matrixRotate);
+            airplane?.Transform(matrixTranslate * matrixScale * matrixRotate);
 
             doubleBufferPanel.Invalidate();
         }

@@ -71,12 +71,10 @@ namespace AnimationCurves
             // radioButtonBezierCurve
             // 
             radioButtonBezierCurve.AutoSize = true;
-            radioButtonBezierCurve.Checked = true;
             radioButtonBezierCurve.Location = new Point(11, 24);
             radioButtonBezierCurve.Name = "radioButtonBezierCurve";
             radioButtonBezierCurve.Size = new Size(88, 19);
             radioButtonBezierCurve.TabIndex = 1;
-            radioButtonBezierCurve.TabStop = true;
             radioButtonBezierCurve.Text = "Bezier curve";
             radioButtonBezierCurve.UseVisualStyleBackColor = true;
             radioButtonBezierCurve.CheckedChanged += RadioButtonBezierCurve_CheckedChanged;
@@ -84,10 +82,12 @@ namespace AnimationCurves
             // radioButtonBezierSpline
             // 
             radioButtonBezierSpline.AutoSize = true;
+            radioButtonBezierSpline.Checked = true;
             radioButtonBezierSpline.Location = new Point(11, 49);
             radioButtonBezierSpline.Name = "radioButtonBezierSpline";
             radioButtonBezierSpline.Size = new Size(90, 19);
             radioButtonBezierSpline.TabIndex = 0;
+            radioButtonBezierSpline.TabStop = true;
             radioButtonBezierSpline.Text = "Bezier spline";
             radioButtonBezierSpline.UseVisualStyleBackColor = true;
             radioButtonBezierSpline.CheckedChanged += RadioButtonBezierSpline_CheckedChanged;
@@ -118,10 +118,12 @@ namespace AnimationCurves
             // radioButtonInsertNode
             // 
             radioButtonInsertNode.AutoSize = true;
+            radioButtonInsertNode.Checked = true;
             radioButtonInsertNode.Location = new Point(11, 47);
             radioButtonInsertNode.Name = "radioButtonInsertNode";
             radioButtonInsertNode.Size = new Size(84, 19);
             radioButtonInsertNode.TabIndex = 1;
+            radioButtonInsertNode.TabStop = true;
             radioButtonInsertNode.Text = "Insert node";
             radioButtonInsertNode.UseVisualStyleBackColor = true;
             radioButtonInsertNode.CheckedChanged += RadioButtonInsertNode_CheckedChanged;
@@ -129,12 +131,10 @@ namespace AnimationCurves
             // radioButtonEdit
             // 
             radioButtonEdit.AutoSize = true;
-            radioButtonEdit.Checked = true;
             radioButtonEdit.Location = new Point(11, 22);
             radioButtonEdit.Name = "radioButtonEdit";
             radioButtonEdit.Size = new Size(45, 19);
             radioButtonEdit.TabIndex = 0;
-            radioButtonEdit.TabStop = true;
             radioButtonEdit.Text = "Edit";
             radioButtonEdit.UseVisualStyleBackColor = true;
             radioButtonEdit.CheckedChanged += RadioButtonEdit_CheckedChanged;
@@ -154,7 +154,7 @@ namespace AnimationCurves
             // timerAnimation
             // 
             timerAnimation.Interval = 16;
-            timerAnimation.Tick += timerAnimation_Tick;
+            timerAnimation.Tick += TimerAnimation_Tick;
             // 
             // FormMain
             // 
