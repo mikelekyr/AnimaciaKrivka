@@ -1,5 +1,4 @@
 ﻿using AnimationCurves.GraphicalBaseClasses;
-using AnimationCurves.Interfaces;
 using AnimationCurves.Tools;
 
 namespace AnimationCurves.GraphicalClasses
@@ -111,7 +110,7 @@ namespace AnimationCurves.GraphicalClasses
         /// <summary>
         /// RecalculateCurve
         /// </summary>
-        protected override void RecalculateCurve()
+        public override void RecalculateCurve()
         {
             curvePoints = DeCasteljau.GetCurvePoints(CurvePointsPositions, curvePrecision);
         }

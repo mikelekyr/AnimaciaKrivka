@@ -27,11 +27,20 @@ namespace AnimationCurves.GraphicalBaseClasses
             {
                 bool positionUpdated = false;
 
-                foreach (var node in controlPoints)
+                var cpsArray = controlPoints.Cast<ControlPointSpline>().ToArray();
+
+                foreach (var node in cpsArray)
                 {
                     if (node.Selected)
                     {
                         node.PositionOffset = value;
+
+                        if (node.NextControlPoint != null)
+                            node.NextControlPoint.PositionOffset = value;
+
+                        if (node.PreviousControlPoint != null)
+                            node.PreviousControlPoint.PositionOffset = value;
+
                         positionUpdated = true;
                     }
                 }
@@ -134,7 +143,7 @@ namespace AnimationCurves.GraphicalBaseClasses
         /// <summary>
         /// Prepocitanie krivky podla potreby
         /// </summary>
-        protected abstract void RecalculateCurve();
+        public abstract void RecalculateCurve();
         public abstract MatrixF GetPointAndAngleOnCurve(float time, out float angle);
 
         #region Public methods

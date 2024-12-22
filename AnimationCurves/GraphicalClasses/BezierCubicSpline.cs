@@ -9,7 +9,7 @@ namespace AnimationCurves.GraphicalClasses
         /// <summary>
         /// RecalculateCurve
         /// </summary>
-        protected override void RecalculateCurve()
+        public override void RecalculateCurve()
         {
             if (controlPoints.Count < 3)
             {
@@ -29,7 +29,10 @@ namespace AnimationCurves.GraphicalClasses
                 if (isFirst)
                 {
                     if (cpsArray[index].Next != null)
+                    {
+                        cpsArray[index].Next?.Curve.RecalculateCurve();
                         continue;
+                    }
 
                     var segment = new CurveSegment(new BezierCurve());
                     cpsArray[index].Next = segment;
@@ -65,7 +68,10 @@ namespace AnimationCurves.GraphicalClasses
                 else if (isLast)
                 {
                     if (cpsArray[index].Previous != null)
+                    {
+                        cpsArray[index].Previous?.Curve.RecalculateCurve();
                         continue;
+                    }
 
                     var segment = new CurveSegment(new BezierCurve());
                     cpsArray[index].Next = null;
@@ -101,7 +107,10 @@ namespace AnimationCurves.GraphicalClasses
                 else if (!isLast && !isFirst && !isBeforeLast && controlPoints.Count > 3)
                 {
                     if (cpsArray[index].Next != null)
+                    {
+                        cpsArray[index].Next?.Curve.RecalculateCurve();
                         continue;
+                    }
 
                     var segment = new CurveSegment(new BezierCurve());
                     cpsArray[index].Next = segment;
