@@ -6,13 +6,161 @@ namespace AnimationCurves.GraphicalClasses
 {
     public class BezierCubicSpline : CurveBase, IDrawable2DObject
     {
+        /// <summary>
+        /// RecalculateCurve
+        /// </summary>
+        protected override void RecalculateCurve()
+        {
+            if (controlPoints.Count < 3)
+            {
+                return;
+            }
+
+            float divConst = 5.0f;
+
+            var cpsArray = controlPoints.Cast<ControlPointSpline>().ToArray();
+
+            foreach (var (cp, index) in cpsArray.Select((value, i) => (value, i)))
+            {
+                bool isFirst = index == 0;
+                bool isLast = index == controlPoints.Count - 1;
+                bool isBeforeLast = index == controlPoints.Count - 2;
+
+                if (isFirst)
+                {
+                    if (cpsArray[index].Next != null)
+                        continue;
+
+                    var segment = new CurveSegment(new BezierCurve());
+                    cpsArray[index].Next = segment;
+                    cpsArray[index + 1].Previous = segment;
+
+                    segment.Curve.AddControlPoint(controlPoints[index]);
+
+                    float startX = controlPoints[index].Position[0, 0];
+                    float startY = controlPoints[index].Position[1, 0];
+
+                    float endX = controlPoints[index + 2].Position[0, 0];
+                    float endY = controlPoints[index + 2].Position[1, 0];
+
+                    float refX = controlPoints[index + 1].Position[0, 0];
+                    float refY = controlPoints[index + 1].Position[1, 0];
+
+                    float diffX = (endX - startX) / divConst;
+                    float diffY = (endY - startY) / divConst;
+
+                    refX -= diffX;
+                    refY -= diffY;
+
+                    var cp1 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
+                    segment.Curve.AddControlPoint(cp1);
+
+                    var cp2 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
+                    segment.Curve.AddControlPoint(cp2);
+
+                    segment.Curve.AddControlPoint(controlPoints[index + 1]);
+                }
+                else if (isLast)
+                {
+                    if (cpsArray[index].Previous != null)
+                        continue;
+
+                    var segment = new CurveSegment(new BezierCurve());
+                    cpsArray[index].Next = null;
+                    cpsArray[index].Previous = segment;
+
+                    segment.Curve.AddControlPoint(controlPoints[index - 1]);
+
+                    float startX = controlPoints[index - 2].Position[0, 0];
+                    float startY = controlPoints[index - 2].Position[1, 0];
+
+                    float endX = controlPoints[index].Position[0, 0];
+                    float endY = controlPoints[index].Position[1, 0];
+
+                    float refX = controlPoints[index - 1].Position[0, 0];
+                    float refY = controlPoints[index - 1].Position[1, 0];
+
+                    float diffX = (endX - startX) / divConst;
+                    float diffY = (endY - startY) / divConst;
+
+                    refX += diffX;
+                    refY += diffY;
+
+                    var cp1 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
+                    segment.Curve.AddControlPoint(cp1);
+
+                    var cp2 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
+                    segment.Curve.AddControlPoint(cp2);
+
+                    segment.Curve.AddControlPoint(controlPoints[index]);
+                }
+                else if (!isLast && !isFirst && !isBeforeLast && controlPoints.Count > 3)
+                {
+                    if (cpsArray[index].Next != null)
+                        continue;
+
+                    var segment = new CurveSegment(new BezierCurve());
+                    cpsArray[index].Next = segment;
+                    cpsArray[index + 1].Previous = segment;
+
+                    segment.Curve.AddControlPoint(controlPoints[index]);
+
+                    float startX = controlPoints[index - 1].Position[0, 0];
+                    float startY = controlPoints[index - 1].Position[1, 0];
+
+                    float endX = controlPoints[index + 1].Position[0, 0];
+                    float endY = controlPoints[index + 1].Position[1, 0];
+
+                    float refX = controlPoints[index].Position[0, 0];
+                    float refY = controlPoints[index].Position[1, 0];
+
+                    float diffX = (endX - startX) / divConst;
+                    float diffY = (endY - startY) / divConst;
+
+                    refX += diffX;
+                    refY += diffY;
+
+                    var cp1 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
+                    segment.Curve.AddControlPoint(cp1);
+
+                    startX = controlPoints[index].Position[0, 0];
+                    startY = controlPoints[index].Position[1, 0];
+
+                    endX = controlPoints[index + 2].Position[0, 0];
+                    endY = controlPoints[index + 2].Position[1, 0];
+
+                    refX = controlPoints[index + 1].Position[0, 0];
+                    refY = controlPoints[index + 1].Position[1, 0];
+
+                    diffX = (endX - startX) / divConst;
+                    diffY = (endY - startY) / divConst;
+
+                    refX -= diffX;
+                    refY -= diffY;
+
+                    var cp2 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
+                    segment.Curve.AddControlPoint(cp2);
+
+                    segment.Curve.AddControlPoint(controlPoints[index + 1]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Draw
+        /// </summary>
         public override void Draw(Graphics g)
         {
-            foreach (var cp in controlPoints)
+            foreach (var (cp, index) in controlPoints.Select((value, i) => (value, i)))
             {
+                bool isLast = index == controlPoints.Count - 1;
+
                 var cps = (cp as ControlPointSpline);
 
-                cps?.Next?.Curve.Draw(g);
+                if (isLast)
+                    cps?.Previous?.Curve.Draw(g);
+                else
+                    cps?.Next?.Curve.Draw(g);
             }
 
             using Font font = new("Arial", 8);
@@ -46,142 +194,6 @@ namespace AnimationCurves.GraphicalClasses
             }
         }
 
-        /// <summary>
-        /// RecalculateCurve
-        /// </summary>
-        protected override void RecalculateCurve()
-        {
-            if (controlPoints.Count < 3)
-            {
-                return;
-            }
-
-            float divConst = 5.0f;
-
-            var cpsArray = controlPoints.Cast<ControlPointSpline>().ToArray();
-
-            foreach (var (cp, index) in cpsArray.Select((value, i) => (value, i)))
-            {
-                bool isFirst = index == 0;
-                bool isLast = index == controlPoints.Count - 1;
-
-                if (cpsArray[index].Next != null)
-                    continue;
-
-                if (isFirst)
-                {
-                    var segment = new CurveSegment(new BezierCurve());
-                    cpsArray[index].Next = segment;
-                    cpsArray[index+1].Previous = segment;
-
-                    segment.Curve.AddControlPoint(controlPoints[index]);
-
-                    float startX = cpsArray[index].Position[0, 0];
-                    float startY = cpsArray[index].Position[1, 0];
-
-                    float endX = cpsArray[index + 2].Position[0, 0];
-                    float endY = cpsArray[index + 2].Position[1, 0];
-
-                    float refX = cpsArray[index + 1].Position[0, 0];
-                    float refY = cpsArray[index + 1].Position[1, 0];
-
-                    float diffX = (endX - startX) / divConst;
-                    float diffY = (endY - startY) / divConst;
-
-                    refX -= diffX;
-                    refY -= diffY;
-
-                    var cp1 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
-                    segment.Curve.AddControlPoint(cp1);
-                    //segment.ControlPoint1 = cp1;
-
-                    var cp2 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
-                    segment.Curve.AddControlPoint(cp2);
-                    //segment.ControlPoint2 = cp2;    
-
-                    segment.Curve.AddControlPoint(controlPoints[index + 1]);
-                }
-                else if (isLast)
-                {
-                    //var segment = new CurveSegment(new BezierCurve());
-                    //cpsArray[index].Next = segment;
-                    //cpsArray[index + 1].Previous = segment;
-
-                    //segment.Curve.AddControlPoint(controlPoints[index - 1]);
-
-                    //float startX = controlPoints[index - 2].Position[0, 0];
-                    //float startY = controlPoints[index - 2].Position[1, 0];
-
-                    //float endX = controlPoints[index].Position[0, 0];
-                    //float endY = controlPoints[index].Position[1, 0];
-
-                    //float refX = controlPoints[index - 1].Position[0, 0];
-                    //float refY = controlPoints[index - 1].Position[1, 0];
-
-                    //float diffX = (endX - startX) / divConst;
-                    //float diffY = (endY - startY) / divConst;
-
-                    //refX += diffX;
-                    //refY += diffY;
-
-                    //var cp1 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
-                    //segment.Curve.AddControlPoint(cp1);
-                    ////segment.ControlPoint1 = cp1;
-
-                    //var cp2 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
-                    //segment.Curve.AddControlPoint(cp2);
-                    ////segment.ControlPoint2 = cp2;
-
-                    //segment.Curve.AddControlPoint(controlPoints[index]);
-                }
-                else if (!isLast && !isFirst && controlPoints.Count > 3)
-                {
-                    var segment = new CurveSegment(new BezierCurve());
-                    cpsArray[index].Next = segment;
-                    cpsArray[index + 1].Previous = segment;
-
-                    segment.Curve.AddControlPoint(controlPoints[index - 1]);
-
-                    float startX = controlPoints[index - 2].Position[0, 0];
-                    float startY = controlPoints[index - 2].Position[1, 0];
-
-                    float endX = controlPoints[index].Position[0, 0];
-                    float endY = controlPoints[index].Position[1, 0];
-
-                    float refX = controlPoints[index - 1].Position[0, 0];
-                    float refY = controlPoints[index - 1].Position[1, 0];
-
-                    float diffX = (endX - startX) / divConst;
-                    float diffY = (endY - startY) / divConst;
-
-                    refX += diffX;
-                    refY += diffY;
-
-                    var cp1 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
-                    segment.Curve.AddControlPoint(cp1);
-
-                    startX = controlPoints[index - 1].Position[0, 0];
-                    startY = controlPoints[index - 1].Position[1, 0];
-
-                    endX = controlPoints[index + 1].Position[0, 0];
-                    endY = controlPoints[index + 1].Position[1, 0];
-
-                    refX = controlPoints[index].Position[0, 0];
-                    refY = controlPoints[index].Position[1, 0];
-
-                    diffX = (endX - startX) / divConst;
-                    diffY = (endY - startY) / divConst;
-
-                    refX -= diffX;
-                    refY -= diffY;
-
-                    var cp2 = new ControlPoint(MatrixF.BuildPointVector(refX, refY));
-                    segment.Curve.AddControlPoint(cp2);
-                    
-                    segment.Curve.AddControlPoint(controlPoints[index]);
-                }
-            }
-        }
 
         /// <summary>
         /// HoverOverControlPoint
