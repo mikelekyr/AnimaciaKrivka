@@ -213,21 +213,23 @@ namespace AnimationCurves.GraphicalClasses
         /// <summary>
         /// HoverOverControlPoint
         /// </summary>
-        public bool HoverOverControlPointSpline(Point mousePosition)
+        public ControlPoint? HoverOverControlPointSpline(Point mousePosition)
         {
-            if (HoverOverControlPoint(mousePosition))
-                return true;
+            var cpsArray = controlPoints.Cast<ControlPointSpline>().ToArray();
 
-            //foreach (var segment in bezierSegments)
-            //{
-            //    if (segment.ControlPoint1 != null && segment.ControlPoint1.IsHitByUV(mousePosition))
-            //        return true;
+            foreach (var node in cpsArray)
+            {
+                if (node.IsHitByUV(mousePosition))
+                    return node; 
 
-            //    if (segment.ControlPoint2 != null && segment.ControlPoint2.IsHitByUV(mousePosition))
-            //        return true;
-            //}
+                if (node.NextControlPoint != null && node.NextControlPoint.IsHitByUV(mousePosition))
+                    return node.NextControlPoint;
 
-            return false;
+                if (node.PreviousControlPoint != null && node.PreviousControlPoint.IsHitByUV(mousePosition))
+                    return node.PreviousControlPoint; 
+            }
+
+            return null;
         }
 
         /// <summary>

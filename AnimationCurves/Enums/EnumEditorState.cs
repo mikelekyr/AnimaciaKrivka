@@ -8,6 +8,8 @@
         SelectBegin,
         Selecting,
         PossibleDrag,
-        NodeDragging
+        PossibleDragHair,
+        NodeDragging,
+        NodeDraggingHair
     }
 }

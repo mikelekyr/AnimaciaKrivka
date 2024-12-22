@@ -12,6 +12,7 @@ namespace AnimationCurves
         private readonly Stopwatch stopwatch = new();
         private Airplane? airplane;
         private BezierCurve? bezierCurve;
+        private ControlPoint? controlPointSingleEdit;
         private BezierCubicSpline? bezierCubicSpline;
         private EnumEditorMode mode;
         private EnumEditorState state;
@@ -90,8 +91,6 @@ namespace AnimationCurves
         /// </summary>
         private void DoubleBufferPanel_MouseDown(object sender, MouseEventArgs e)
         {
-            #region Bezier curve
-
             if (curveType == EnumCurveType.BezierCurve)
             {
                 if (bezierCurve == null)
@@ -103,7 +102,7 @@ namespace AnimationCurves
 
                     if (state == EnumEditorState.PossibleDrag)
                     {
-                        int selectedCP = bezierCurve.GetVertexIDByUV(e.Location);
+                        int selectedCP = bezierCurve.GetControlPointIDByUV(e.Location);
 
                         if (selectedCP != CurveBase.ID_INVALID)
                         {
@@ -136,12 +135,9 @@ namespace AnimationCurves
                 }
                 else if (mode == EnumEditorMode.DeleteNode)
                 {
-                    bezierCurve.Remove(bezierCurve.GetVertexIDByUV(e.Location));
+                    bezierCurve.Remove(bezierCurve.GetControlPointIDByUV(e.Location));
                 }
             }
-            #endregion
-
-            #region Bezier cubic spline
 
             if (curveType == EnumCurveType.BezierCubicSpline)
             {
@@ -154,7 +150,7 @@ namespace AnimationCurves
 
                     if (state == EnumEditorState.PossibleDrag)
                     {
-                        int selectedCP = bezierCubicSpline.GetVertexIDByUV(e.Location);
+                        int selectedCP = bezierCubicSpline.GetControlPointIDByUV(e.Location);
 
                         if (selectedCP != CurveBase.ID_INVALID)
                         {
@@ -169,6 +165,18 @@ namespace AnimationCurves
 
                         state = EnumEditorState.NodeDragging;
                         startMousePos = e.Location;
+                    }
+                    else if (state == EnumEditorState.PossibleDragHair)
+                    {
+                        bezierCubicSpline.UnselectAllVertices();
+
+                        if (controlPointSingleEdit != null)
+                        {
+                            controlPointSingleEdit.Selected = true;
+
+                            state = EnumEditorState.NodeDraggingHair;
+                            startMousePos = e.Location;
+                        }
                     }
                     else
                     {
@@ -187,11 +195,9 @@ namespace AnimationCurves
                 }
                 else if (mode == EnumEditorMode.DeleteNode)
                 {
-                    bezierCubicSpline.Remove(bezierCubicSpline.GetVertexIDByUV(e.Location));
+                    bezierCubicSpline.Remove(bezierCubicSpline.GetControlPointIDByUV(e.Location));
                 }
             }
-
-            #endregion
 
             doubleBufferPanel.Invalidate();
         }
@@ -235,6 +241,14 @@ namespace AnimationCurves
                         {
                             bezierCubicSpline.ControlPointOffset = new(e.Location.X - startMousePos.X, e.Location.Y - startMousePos.Y);
                         }
+                        else if (state == EnumEditorState.NodeDraggingHair)
+                        {
+                            if (controlPointSingleEdit != null)
+                            {
+                                controlPointSingleEdit.PositionOffset = new(e.Location.X - startMousePos.X, e.Location.Y - startMousePos.Y);
+                                bezierCubicSpline.RecalculateCurve();
+                            }
+                        }
                         else if (state == EnumEditorState.Selecting || state == EnumEditorState.SelectBegin)
                         {
                             state = EnumEditorState.Selecting;
@@ -272,15 +286,22 @@ namespace AnimationCurves
                     if (bezierCubicSpline == null)
                         return;
 
-                    if (bezierCubicSpline.HoverOverControlPointSpline(e.Location))
+                    controlPointSingleEdit = bezierCubicSpline.HoverOverControlPointSpline(e.Location);
+                    
+                    if (controlPointSingleEdit == null)
+                    {
+                        state = EnumEditorState.None;
+                        Cursor = Cursors.Default;
+                    }
+                    else if (controlPointSingleEdit is ControlPointSpline)
                     {
                         state = EnumEditorState.PossibleDrag;
                         Cursor = Cursors.Hand;
                     }
                     else
                     {
-                        state = EnumEditorState.None;
-                        Cursor = Cursors.Default;
+                        state = EnumEditorState.PossibleDragHair;
+                        Cursor = Cursors.Hand;
                     }
                 }
             }
@@ -319,6 +340,18 @@ namespace AnimationCurves
                     if (state == EnumEditorState.NodeDragging)
                     {
                         bezierCubicSpline.UpdateControlPointsPositionAfterDrag();
+                    }
+                    else if (state == EnumEditorState.NodeDraggingHair)
+                    {
+                        if (controlPointSingleEdit != null)
+                        {
+                            controlPointSingleEdit.Position = controlPointSingleEdit.Position;
+                            controlPointSingleEdit.PositionOffset = new();  
+                            bezierCubicSpline.RecalculateCurve();
+
+                            controlPointSingleEdit.Selected = false;
+                            controlPointSingleEdit = null;
+                        }
                     }
                     else if (state == EnumEditorState.Selecting)
                     {

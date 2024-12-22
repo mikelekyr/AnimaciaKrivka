@@ -190,13 +190,14 @@ namespace AnimationCurves.GraphicalBaseClasses
         /// <summary>
         /// Get vertex ID by U, V coordinates or ID_INVALID if not hit
         /// </summary>
-        public int GetVertexIDByUV(Point p)
+        public int GetControlPointIDByUV(Point p)
         {
             for (int i = controlPoints.Count - 1; i >= 0; i--)
             {
                 if (controlPoints[i].IsHitByUV(p))
                     return i;
             }
+
             return ID_INVALID;
         }
 
@@ -289,10 +290,20 @@ namespace AnimationCurves.GraphicalBaseClasses
         /// </summary>
         public void UpdateControlPointsPositionAfterDrag()
         {
-            foreach (var node in controlPoints)
+            var cpsArray = controlPoints.Cast<ControlPointSpline>().ToArray();
+
+            foreach (var node in cpsArray)
             {
                 if (node.Selected)
+                {
                     node.Position = node.Position;
+
+                    if (node.NextControlPoint != null)
+                        node.NextControlPoint.Position = node.NextControlPoint.Position;
+
+                    if (node.PreviousControlPoint != null)
+                        node.PreviousControlPoint.Position = node.PreviousControlPoint.Position;
+                }
             }
         }
 
@@ -301,7 +312,7 @@ namespace AnimationCurves.GraphicalBaseClasses
         /// </summary>
         public bool HoverOverControlPoint(Point parMousePosition)
         {
-            var nodeMouseOver = GetVertexIDByUV(parMousePosition);
+            var nodeMouseOver = GetControlPointIDByUV(parMousePosition);
 
             return (nodeMouseOver != ID_INVALID);
         }
